@@ -38,7 +38,7 @@ import json
 
 
 from synoptic import Latest
-output_dir='assets/maps/metar_mrms'
+output_dir= '../assets/maps/metar_mrms'
 os.makedirs(output_dir, exist_ok=True)
 ######################### METAR BLOCK #########################
 
