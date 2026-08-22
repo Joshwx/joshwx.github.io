@@ -1,5 +1,6 @@
 .dropdown{
     display: inline-block;
+    position: relative;
 }
 .dropdown button{
     background-color: #222222;
@@ -16,6 +17,7 @@
 }
 
 .dropdown .content{
+    display: none;
     position: absolute;
     background-color: #222222;
     min-width: 100px;
