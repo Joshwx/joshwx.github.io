@@ -126,7 +126,7 @@ def extract_build_data_vort (ds, H):
 for fxx in range(0,52,1):
     #H and ds are the two products that are going into every figure so loop through them between the forecast hours
     #they also are function calls
-    H = Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=fxx)
+    H = Herbie("2026-08-22 00:00", model='rap', product='awp236pgrb', fxx=fxx)
     ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=False)
     #you are calling the return products and using the func to use ds and H to plot data
     fig, ax = extract_build_data(ds,H)
@@ -136,7 +136,7 @@ for fxx in range(0,52,1):
 for fxx in range(0,52,1):
     #H and ds are the two products that are going into every figure so loop through them between the forecast hours
     #they also are function calls
-    H = Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=fxx)
+    H = Herbie("2026-08-22 00:00", model='rap', product='awp236pgrb', fxx=fxx)
     ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=False)
     #you are calling the return products and using the func to use ds and H to plot data
     fig, ax = extract_build_data_vort(ds,H)
