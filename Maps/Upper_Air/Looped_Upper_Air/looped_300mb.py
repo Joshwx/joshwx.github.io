@@ -83,6 +83,7 @@ def extract_build_data (ds,H, fxx):
 
 #pull from model
 target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+print('looking for run', target_time)
 max_hours=51
 
 #determine if 21 frames or 51
