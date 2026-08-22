@@ -14,4 +14,3 @@ dependencies:
   - pip:
     - herbie-data
     - sounderpy
-    - SynopticPy
