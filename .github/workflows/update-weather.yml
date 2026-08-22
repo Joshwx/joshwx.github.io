@@ -20,7 +20,8 @@ jobs:
         with:
           environment-file: environment.yml
           activate-environment: Map_wall
-          python-version: "3.11"
+          miniforge-version: latest
+          use-mamba: true
 
       - name: Run weather map script
         shell: bash -l {0}
