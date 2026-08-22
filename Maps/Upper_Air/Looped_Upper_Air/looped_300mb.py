@@ -20,7 +20,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
-output_dir='C:/Users/sherm/PycharmProjects/MapWall/assets/maps/upper_level_300mb'
+output_dir = 'assets/maps/upper_level_300mb'
 os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
