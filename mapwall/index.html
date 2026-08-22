@@ -15,6 +15,7 @@
   #meta { color: #999; font-size: 14px; margin-bottom: 16px; }
   #mapImage {
     max-width: 95%;
+    height: auto;
     border: 1px solid #333;
     border-radius: 4px;
   }
@@ -84,8 +85,10 @@ function showFrame(i) {
   slider.value = currentIndex;
 }
 
+document.getElementById('firstBtn').addEventListener("click", () => showFrame(0));
 document.getElementById("prevBtn").addEventListener("click", () => showFrame(currentIndex - 1));
 document.getElementById("nextBtn").addEventListener("click", () => showFrame(currentIndex + 1));
+document.getElementById("lastBtn").addEventListener("click", ()=> showFrame(frames.length-1));
 slider.addEventListener("input", (e) => showFrame(parseInt(e.target.value)));
 
 playBtn.addEventListener("click", () => {
