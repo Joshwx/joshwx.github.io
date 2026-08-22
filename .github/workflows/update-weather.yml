@@ -1,0 +1,33 @@
+name: Update Weather Maps
+
+on:
+  schedule:
+    - cron: "30 */3 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-maps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          python-version: "3.11"
+
+      - name: Run weather map script
+        shell: bash -l {0}
+        run: |
+          python "Maps/Upper_Air/Looped_Upper_Air/looped_300mb.py"
+
+      - name: Commit and push updated maps
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update weather maps"
+          file_pattern: "assets/maps/**"
