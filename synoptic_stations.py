@@ -42,7 +42,7 @@ output_dir='assets/maps/metar_mrms'
 os.makedirs(output_dir, exist_ok=True)
 ######################### METAR BLOCK #########################
 
-synoptic_token= '28a31dfeeb73462b9b5659bca4a88d13'
+synoptic_token = os.environ["SYNOPTIC_TOKEN"]
 
 #pull metar data from listed bounds (OH Valley and surrounding areas), put into df
 bounds=[-91, -80, 34.5, 41]
