@@ -1,7 +1,12 @@
+import sys
+for p in sys.path:
+    print(p)
+
+
 import os
 
 import matplotlib
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
@@ -19,6 +24,8 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 from datetime import datetime, timedelta
 import json
+
+
 
 output_dir = 'assets/maps/upper_level_300mb'
 os.makedirs(output_dir, exist_ok=True)
