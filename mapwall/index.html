@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather Map Wall</title>
+<style>
+  body {
+    background: #111;
+    color: #eee;
+    font-family: system-ui, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { margin-bottom: 4px; }
+  #meta { color: #999; font-size: 14px; margin-bottom: 16px; }
+  #mapImage {
+    max-width: 95%;
+    border: 1px solid #333;
+    border-radius: 4px;
+  }
+  #controls { margin-top: 16px; }
+  button {
+    background: #222;
+    color: #eee;
+    border: 1px solid #444;
+    padding: 8px 16px;
+    margin: 0 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  button:hover { background: #333; }
+  input[type="range"] { width: 60%; margin-top: 12px; }
+  a { color: #6cf; }
+</style>
+</head>
+<body>
+
+<h1>Upper Level 300mb — Height & Wind</h1>
+<div id="meta">Loading...</div>
+
+<img id="mapImage" src="" alt="Weather map frame">
+
+<div id="controls">
+  <button id="prevBtn">◀ Prev</button>
+  <button id="playBtn">▶ Play</button>
+  <button id="nextBtn">Next ▶</button>
+  <br>
+  <input type="range" id="frameSlider" min="0" value="0" step="1">
+</div>
+
+<p><a href="../">← Back to portfolio</a></p>
+
+<script>
+const dataDir = "../assets/maps/upper_level_300mb";
+let frames = [];
+let currentIndex = 0;
+let playing = false;
+let playTimer = null;
+
+const img = document.getElementById("mapImage");
+const meta = document.getElementById("meta");
+const slider = document.getElementById("frameSlider");
+const playBtn = document.getElementById("playBtn");
+
+async function loadManifest() {
+  const res = await fetch(`${dataDir}/document.json?cachebust=${Date.now()}`);
+  const data = await res.json();
+  frames = data.frames;
+  slider.max = frames.length - 1;
+
+  meta.textContent = `Run: ${data.run_time} UTC · Generated: ${new Date(data.generated_at).toLocaleString()} · ${frames.length} frames`;
+
+  showFrame(0);
+}
+
+function showFrame(i) {
+  if (!frames.length) return;
+  currentIndex = ((i % frames.length) + frames.length) % frames.length;
+  const frame = frames[currentIndex];
+  img.src = `${dataDir}/${frame.file}`;
+  slider.value = currentIndex;
+}
+
+document.getElementById("prevBtn").addEventListener("click", () => showFrame(currentIndex - 1));
+document.getElementById("nextBtn").addEventListener("click", () => showFrame(currentIndex + 1));
+slider.addEventListener("input", (e) => showFrame(parseInt(e.target.value)));
+
+playBtn.addEventListener("click", () => {
+  playing = !playing;
+  playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+  if (playing) {
+    playTimer = setInterval(() => showFrame(currentIndex + 1), 400);
+  } else {
+    clearInterval(playTimer);
+  }
+});
+
+loadManifest();
+</script>
+
+</body>
+</html>
