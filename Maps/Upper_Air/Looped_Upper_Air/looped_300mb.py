@@ -57,7 +57,7 @@ def extract_build_data (ds,H, fxx):
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
     # GH contours
     line = ax.contour(lon, lat, gh_smooth[:, :], levels=list(range(798, 996, 6)), colors='black', linewidths=3,
-                      transform=ccrs.PlateCarree(), cbar=True, cbar_kwargs={'orientation': 'vertical'})
+                      transform=ccrs.PlateCarree())
     # wind stuff
     wnd_speed = np.arange(60, 160, 20)
     cf = ax.contourf(lon, lat, speed_300, wnd_speed, cmap='BuPu', transform=ccrs.PlateCarree())
