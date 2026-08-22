@@ -24,8 +24,11 @@ jobs:
 
       - name: Run weather map script
         shell: bash -l {0}
+        env:
+          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
         run: |
           python "Maps/Upper_Air/Looped_Upper_Air/looped_300mb.py"
+          python "Maps/synoptic_stations.py"
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
