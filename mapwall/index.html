@@ -3,161 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <title>Weather Map Wall</title>
-  <link rel="stylesheet" href="style.css">
-<style>
-  body {
-    background: #111;
-    color: #eee;
-    font-family: system-ui, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-  h1 { margin-bottom: 4px; }
-  #meta { color: #999; font-size: 14px; margin-bottom: 16px; }
-  #mapImage {
-    max-width: 95%;
-    max-height: 80vh;
-    width: auto;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    border: 1px solid #333;
-    border-radius: 4px;
-  }
-  #controls { margin-top: 16px; }
-  button {
-    background: #222;
-    color: #eee;
-    border: 1px solid #444;
-    padding: 8px 16px;
-    margin: 0 4px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  button:hover { background: #333; }
-  input[type="range"] { width: 60%; margin-top: 12px; }
-  a { color: #6cf; cursor: pointer; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- TODO: dropdown menu with data-map="300mb" / "500mb" / etc. links -->
 <div class="dropdown">
-    <button class="button">Upper-Air</button>
-    <div class="content">
-      <a data-map="300mb">300mb Analysis</a>
-      <a data-map="500mb">500mb Analysis</a>
-      <a data-map="700mb">700mb Analysis</a>
-      <a data-map="850mb">850mb Analysis</a>
-    </div>
+  <button class="button">Upper-Air</button>
+  <div class="content">
+    <!-- <a data-map="...">...</a> -->
   </div>
-<h1 id="pageTitle">Loading...</h1>
-<div id="meta">Loading...</div>
+</div>
+
+<h1 id="pageTitle"></h1>
+<div id="meta"></div>
 
 <img id="mapImage" src="" alt="Weather map frame">
 
-<div id="controls">
-  <button id="firstBtn">⏮ First</button>
-  <button id="prevBtn">◀ Prev</button>
-  <button id="playBtn">▶ Play</button>
-  <button id="nextBtn">Next ▶</button>
-  <button id="lastBtn">Last ⏭</button>
-  <br>
-  <input type="range" id="frameSlider" min="0" value="0" step="1">
-</div>
-
-<p><a href="../">Back to Main Portfolio</a></p>
+<!-- TODO: first/prev/play/next/last buttons + range slider -->
+<div id="controls"></div>
 
 <script>
-// central config: map key -> { folder name, display title }
-const MAP_CONFIG = {
-  "300mb": { dir: "upper_level_300mb", title: "300mb Heights and Winds" },
-  "500mb": { dir: "upper_level_500mb",      title: "500mb Heights and Winds" },
-  "700mb": { dir: "upper_level_700mb",      title: "700mb Heights and Winds" },
-  "850mb": { dir: "upper_level_850mb",      title: "850mb Heights and Winds" },
-};
+// TODO: MAP_CONFIG = { key: { dir, title }, ... }
 
 let frames = [];
 let currentIndex = 0;
-let playing = false;
-let playTimer = null;
-let currentMap = null;
-
-const img = document.getElementById("mapImage");
-const meta = document.getElementById("meta");
-const title = document.getElementById("pageTitle");
-const slider = document.getElementById("frameSlider");
-const playBtn = document.getElementById("playBtn");
 
 function getInitialMap() {
-  const params = new URLSearchParams(window.location.search);
-  const requested = params.get("map");
-  return (requested && MAP_CONFIG[requested]) ? requested : "300mb";
+  // TODO: read ?map= from URL, fall back to a default
 }
 
 async function loadMap(mapKey) {
-  const config = MAP_CONFIG[mapKey];
-  if (!config) return;
-
-  // stop any active playback when switching maps
-  playing = false;
-  clearInterval(playTimer);
-  playBtn.textContent = "▶ Play";
-
-  currentMap = mapKey;
-  title.textContent = config.title;
-  meta.textContent = "Loading...";
-
-  // reflect selection in the URL without a full reload
-  const params = new URLSearchParams(window.location.search);
-  params.set("map", mapKey);
-  history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
-
-  const dataDir = `../assets/maps/${config.dir}`;
-  try {
-    const res = await fetch(`${dataDir}/document.json?cachebust=${Date.now()}`);
-    const data = await res.json();
-    frames = data.frames;
-    slider.max = frames.length - 1;
-    meta.textContent = `Run: ${data.run_time} UTC · Generated: ${new Date(data.generated_at).toLocaleString()} · ${frames.length} frames`;
-    showFrame(0);
-  } catch (err) {
-    meta.textContent = "Failed to load map data.";
-    console.error(err);
-  }
+  // TODO: fetch `assets/maps/<dir>/document.json`
+  // TODO: set frames, page title/meta text
+  // TODO: call showFrame(0)
 }
 
 function showFrame(i) {
-  if (!frames.length) return;
-  currentIndex = ((i % frames.length) + frames.length) % frames.length;
-  const frame = frames[currentIndex];
-  const config = MAP_CONFIG[currentMap];
-  img.src = `../assets/maps/${config.dir}/${frame.file}`;
-  slider.value = currentIndex;
+  // TODO: wrap index, set img.src, update slider
 }
 
-document.getElementById('firstBtn').addEventListener("click", () => showFrame(0));
-document.getElementById("prevBtn").addEventListener("click", () => showFrame(currentIndex - 1));
-document.getElementById("nextBtn").addEventListener("click", () => showFrame(currentIndex + 1));
-document.getElementById("lastBtn").addEventListener("click", ()=> showFrame(frames.length-1));
-slider.addEventListener("input", (e) => showFrame(parseInt(e.target.value)));
-
-playBtn.addEventListener("click", () => {
-  playing = !playing;
-  playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
-  if (playing) {
-    playTimer = setInterval(() => showFrame(currentIndex + 1), 400);
-  } else {
-    clearInterval(playTimer);
-  }
-});
-
-// wire up dropdown links
-document.querySelectorAll('.dropdown .content a[data-map]').forEach(link => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    loadMap(link.dataset.map);
-  });
-});
+// TODO: wire up buttons/slider to call showFrame()
+// TODO: wire up play/pause with setInterval
+// TODO: wire up dropdown clicks to call loadMap()
 
 loadMap(getInitialMap());
 </script>

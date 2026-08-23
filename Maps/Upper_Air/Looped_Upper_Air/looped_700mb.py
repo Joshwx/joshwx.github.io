@@ -24,6 +24,34 @@ import json
 output_dir = 'assets/maps/upper_level_700mb'
 os.makedirs(output_dir, exist_ok=True)
 
+script_dir=os.path.dirname(os.path.abspath(__file__))
+cmap_path=os.path.join(script_dir,'..', '..', '..', 'assets', 'cmap', 'MPL_Greens.rgb')
+cmap_greens = load_ncl_rgb(CMAP_PATH)
+
+
+def load_ncl_rgb(filepath, smooth=True):
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+
+    rgb_vals = []
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith(';') or line.startswith('#') or line.startswith('!') or '=' in line:
+            continue
+        parts = line.split()
+        if len(parts) >= 3:
+            rgb_vals.append([float(x) for x in parts[:3]])
+
+    rgb = np.array(rgb_vals)
+
+    # normalize only if values are in 0-255 range
+    if rgb.max() > 1.0:
+        rgb = rgb / 255.0
+
+    if smooth:
+        return LinearSegmentedColormap.from_list('custom_cmap', rgb, N=256)
+    else:
+        return ListedColormap(rgb)
 
 #function that builds the images with ds and H as arguments
 def extract_build_data (ds,ds2,H, fxx):
@@ -60,30 +88,6 @@ def extract_build_data (ds,ds2,H, fxx):
     temp_smooth = gaussian_filter(temp_c, 2)
     smooth_rh = gaussian_filter(mean_rh, 2)
 
-
-    def load_ncl_rgb(filepath, smooth=True):
-        with open(filepath, 'r') as f:
-            lines = f.readlines()
-
-        rgb_vals = []
-        for line in lines:
-            line = line.strip()
-            if not line or line.startswith(';') or line.startswith('#') or line.startswith('!') or '=' in line:
-                continue
-            parts = line.split()
-            if len(parts) >= 3:
-                rgb_vals.append([float(x) for x in parts[:3]])
-
-        rgb = np.array(rgb_vals)
-
-        # normalize only if values are in 0-255 range
-        if rgb.max() > 1.0:
-            rgb = rgb / 255.0
-
-        if smooth:
-            return LinearSegmentedColormap.from_list('custom_cmap', rgb, N=256)
-        else:
-            return ListedColormap(rgb)
 
     cmap_greens = load_ncl_rgb('C:/Users/sherm/Desktop/CMAP/MPL_Greens.rgb')
 
