@@ -1,6 +1,12 @@
-import sounderpy as spy
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+import os
+
+import matplotlib
+# matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+import numpy as np
 import metpy
 import metpy.calc as mpcalc
 from metpy.units import units
@@ -12,13 +18,15 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from datetime import datetime, timedelta
+import json
 
-import numpy as np
+output_dir = 'assets/maps/upper_level_700mb'
+os.makedirs(output_dir, exist_ok=True)
 
 
 #function that builds the images with ds and H as arguments
-def extract_build_data (ds,ds2,H):
+def extract_build_data (ds,ds2,H, fxx):
     gh = ds['gh']
     u = ds['u']
     v = ds['v']
@@ -123,13 +131,43 @@ def extract_build_data (ds,ds2,H):
                  loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
-    return fig, ax
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
 
-for fxx in range(0,51,1):
-    H = Herbie("2026-01-24 03:00", model='rap', product='awp236pgrb', fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):700 mb:", remove_grib=False)
-    ds2 = H.xarray(":RH:(700|650|600|550|500) mb")
-    fig, ax = extract_build_data(ds,ds2,H)
+    return out_path, valid_time
+
+
+#pull datetime to find right time
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+max_hours=51
+
+
+#determine if 21 frames or 51
+run_number=target_time.hour
+
+if run_number % 6==0:
+    max_hours=52
+else:
+    max_hours=22
+
+#create empty list for frames
+frames=[]
+for fxx in range(0,max_hours,1):
+    try:
+        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):700 mb:", remove_grib=True)
+        ds2 = H.xarray(":RH:(700|650|600|550|500) mb")
+        out_path, valid_time = extract_build_data(ds,ds2, H, fxx)
+        frames.append({"fxx": fxx, "file": os.path.basename(out_path), "valid_time": valid_time})
+        print(f"Saved frame f{fxx:02d}")
+    except Exception as e:
+        print(f"Skipping fxx=P{fxx}: {e}")
+        continue
+
+#write document dictionary so the website JS knows what frames exist
+document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
+          'frames':frames}
+with open(os.path.join(output_dir, "document.json"), 'w') as f:
+    json.dump(document, f,indent=2)
+print(f"Done {len(frames)} frames saved")
