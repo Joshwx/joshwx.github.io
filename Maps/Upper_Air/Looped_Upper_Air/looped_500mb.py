@@ -24,7 +24,7 @@ output_dir = 'assets/maps/upper_level_500mb'
 os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
-def extract_build_data (ds,H):
+def extract_build_data (ds,H,fxx):
     gh = ds['gh'] / 10
     u = ds['u']
     v = ds['v']
@@ -71,11 +71,11 @@ def extract_build_data (ds,H):
     ax.set_title(f'500mb Height (dam), Winds (kts) ', fontsize=26, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
 
-    return fig,ax
+    return out_path,valid_time
 
 #pull from model
 target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
@@ -95,7 +95,7 @@ frames=[]
 for fxx in range(0,max_hours,1):
     try:
         H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
-        ds = H.xarray(":(?:HGT|UGRD|VGRD):300 mb:", remove_grib=True)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=True)
         out_path, valid_time=extract_build_data(ds, H, fxx)
         frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
         print(f"Saved frame f{fxx:02d}")

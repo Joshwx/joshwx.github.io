@@ -27,10 +27,16 @@ jobs:
           miniforge-version: latest
           use-mamba: true
 
-      - name: Run weather map script
+      - name: Run 300mb script
         shell: bash -l {0}
         run: |
           python "Maps/Upper_Air/Looped_Upper_Air/looped_300mb.py"
+
+      - name: Run 500mb Script
+        shell: bash -l {0}
+        run: |
+          python "Maps/Upper_Air/Looped_Upper_Air/looped_500mb.py"
+
       - name: Run METAR/MRMS Script
         shell: bash -l {0}
         env:
