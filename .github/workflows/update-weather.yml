@@ -10,11 +10,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  update-maps:
+  run-300mb:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: write
+    timeout-minutes: 20
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -29,27 +27,83 @@ jobs:
 
       - name: Run 300mb script
         shell: bash -l {0}
-        run: |
-          python "Maps/Upper_Air/Looped_Upper_Air/looped_300mb.py"
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_300mb.py"
 
-      - name: Run 500mb Script
+      - name: Upload 300mb output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-300mb
+          path: assets/maps/upper_level_300mb/
+
+  run-500mb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 500mb script
         shell: bash -l {0}
-        run: |
-          python "Maps/Upper_Air/Looped_Upper_Air/looped_500mb.py"
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_500mb.py"
 
-      - name: Run METAR/MRMS Script
+      - name: Upload 500mb output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-500mb
+          path: assets/maps/heights_500mb/
+
+  run-metar-mrms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run METAR/MRMS script
         shell: bash -l {0}
         env:
           SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
-        continue-on-error: true
-        run: |
-          python "Maps/synoptic_stations.py"
+        run: python "Maps/synoptic_stations.py"
 
-      - name: Pull latest changes
-        run: |
-          git stash --include-untracked
-          git pull --rebase origin main
-          git stash pop
+      - name: Upload METAR/MRMS output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-metar-mrms
+          path: assets/maps/metar_mrms/   # adjust to your actual output dir
+
+  commit:
+    needs: [run-300mb, run-500mb, run-metar-mrms]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Download all map artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: assets/maps/
+          pattern: maps-*
+          merge-multiple: true
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
