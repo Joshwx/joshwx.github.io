@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maps-500mb
-          path: assets/maps/heights_500mb/
+          path: assets/maps/upper_level_500mb/
 
   run-metar-mrms:
     runs-on: ubuntu-latest
@@ -86,8 +86,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maps-metar-mrms
-          path: assets/maps/metar_mrms/   # adjust to your actual output dir
-
+          path: assets/maps/metar_mrms/
   commit:
     needs: [run-300mb, run-500mb, run-metar-mrms]
     if: always()
