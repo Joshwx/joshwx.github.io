@@ -157,7 +157,7 @@ cb.set_label("Reflectivity (dBZ)",fontsize=22)
 cb.ax.tick_params(labelsize=16)
 #title settings
 ax.set_title(f'MRMS & METAR',  fontsize=22, loc='left')
-plt.title("Composite Reflectivity and Surface Observations", fontsize=26)
+plt.title("Composite Reflectivity\n Surface Observations", fontsize=26)
 ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
 out_path=os.path.join(output_dir, f'latest.png')

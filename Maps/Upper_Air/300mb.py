@@ -15,7 +15,7 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 
 #pull from model
-H= Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=0)
+H= Herbie("2026-08-22 01:00", model='rap', product='awp236pgrb', fxx=0)
 
 print(H.inventory(":300 mb"))
 

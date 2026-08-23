@@ -1,4 +1,8 @@
-import sounderpy as spy
+import os
+
+import matplotlib
+# matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
@@ -13,7 +17,11 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
+from datetime import datetime, timedelta
+import json
 
+output_dir = 'assets/maps/upper_level_500mb'
+os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
 def extract_build_data (ds,H):
@@ -69,75 +77,38 @@ def extract_build_data (ds,H):
 
     return fig,ax
 
-def extract_build_data_vort (ds, H):
-    gh = ds['gh'] / 10
-    u = ds['u']
-    v = ds['v']
-    lat = ds['latitude']
-    lon = ds['longitude']
-    time = ds['time']
-    u_kts = ds['u'] * 1.944
-    v_kts = ds['v'] * 1.944
-    speed_500 = np.sqrt(u_kts ** 2 + v_kts ** 2)
-    # (print(speed_500))
-    print(time)
-    # strip time
-    time_valid = pd.Timestamp(ds['time'].values)
-    time_str = time_valid.strftime('%HZ')
-    valid_time_moving = pd.Timestamp(ds['valid_time'].values)
-    valid_time = valid_time_moving.strftime('%HZ %a %b %d %Y')
+#pull from model
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+print('looking for run', target_time)
+max_hours=51
 
-    gh_smooth = gaussian_filter(gh, 1)
-    print(lat, lon)
+#determine if 21 frames or 51
+run_number=target_time.hour
 
-    # vorticity calc
-    dx, dy = mpcalc.lat_lon_grid_deltas(lon, lat)
-    vort = mpcalc.absolute_vorticity(u, v, dx=dx, dy=dy)
-    synoptic_scale = vort * 1e5
+if run_number % 6==0:
+    max_hours=52
+else:
+    max_hours=22
 
-    # plot settings s
-    proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
-                                 standard_parallels=(30, 60))
-    fig = plt.figure(figsize=(20, 12))
-    ax = plt.axes(projection=proj)
-    ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
-    # vort contour
-    cf = ax.contourf(lon, lat, synoptic_scale, levels=list(range(16, 44, 4)),
-                     cmap='plasma', transform=ccrs.PlateCarree())
-    # gh heights
-    # GH contours
-    line = ax.contour(lon, lat, gh_smooth[:, :], levels=list(range(500, 600, 6)), colors='black', linewidths=3,
-                      transform=ccrs.PlateCarree())
-    ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
-    # additional plot settings
-    ax.coastlines('50m')
-    ax.add_feature(cfeature.BORDERS.with_scale('50m'))
-    ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'500mb Height (dam),\n Absolute Vorticity (10^-5 s^-1) ', fontsize=26, loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
+#create empty list for frames
+frames=[]
+for fxx in range(0,max_hours,1):
+    try:
+        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD):300 mb:", remove_grib=True)
+        out_path, valid_time=extract_build_data(ds, H, fxx)
+        frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
+        print(f"Saved frame f{fxx:02d}")
+    except Exception as e:
+        print(f"Skipping fxx=P{fxx}: {e}")
+        continue
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
-
-    return fig, ax
-
-for fxx in range(0,52,1):
-    #H and ds are the two products that are going into every figure so loop through them between the forecast hours
-    #they also are function calls
-    H = Herbie("2026-08-22 00:00", model='rap', product='awp236pgrb', fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=False)
-    #you are calling the return products and using the func to use ds and H to plot data
-    fig, ax = extract_build_data(ds,H)
+#write document dictionary so the website JS knows what frames exist
+document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
+          'frames':frames}
+with open(os.path.join(output_dir, "document.json"), 'w') as f:
+    json.dump(document, f,indent=2)
+print(f"Done {len(frames)} frames saved")
 
 
-
-for fxx in range(0,52,1):
-    #H and ds are the two products that are going into every figure so loop through them between the forecast hours
-    #they also are function calls
-    H = Herbie("2026-08-22 00:00", model='rap', product='awp236pgrb', fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=False)
-    #you are calling the return products and using the func to use ds and H to plot data
-    fig, ax = extract_build_data_vort(ds,H)
 
