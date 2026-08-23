@@ -37,20 +37,20 @@
   }
   button:hover { background: #333; }
   input[type="range"] { width: 60%; margin-top: 12px; }
-  a { color: #6cf; }
+  a { color: #6cf; cursor: pointer; }
 </style>
 </head>
 <body>
 <div class="dropdown">
     <button class="button">Upper-Air</button>
     <div class="content">
-      <a href="#">300mb Analysis</a>
-      <a href="#">500mb Analysis</a>
-      <a href="#">700mb Analysis</a>
-      <a href="#">850mb Analysis</a>
+      <a data-map="300mb">300mb Analysis</a>
+      <a data-map="500mb">500mb Analysis</a>
+      <a data-map="700mb">700mb Analysis</a>
+      <a data-map="850mb">850mb Analysis</a>
     </div>
   </div>
-<h1>300mb Heights and Winds</h1>
+<h1 id="pageTitle">Loading...</h1>
 <div id="meta">Loading...</div>
 
 <img id="mapImage" src="" alt="Weather map frame">
@@ -68,33 +68,70 @@
 <p><a href="../">Back to Main Portfolio</a></p>
 
 <script>
-const dataDir = "../assets/maps/upper_level_300mb";
+// central config: map key -> { folder name, display title }
+const MAP_CONFIG = {
+  "300mb": { dir: "upper_level_300mb", title: "300mb Heights and Winds" },
+  "500mb": { dir: "heights_500mb",      title: "500mb Heights and Winds" },
+  "700mb": { dir: "heights_700mb",      title: "700mb Heights and Winds" },
+  "850mb": { dir: "heights_850mb",      title: "850mb Heights and Winds" },
+};
+
 let frames = [];
 let currentIndex = 0;
 let playing = false;
 let playTimer = null;
+let currentMap = null;
 
 const img = document.getElementById("mapImage");
 const meta = document.getElementById("meta");
+const title = document.getElementById("pageTitle");
 const slider = document.getElementById("frameSlider");
 const playBtn = document.getElementById("playBtn");
 
-async function loadManifest() {
-  const res = await fetch(`${dataDir}/document.json?cachebust=${Date.now()}`);
-  const data = await res.json();
-  frames = data.frames;
-  slider.max = frames.length - 1;
+function getInitialMap() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get("map");
+  return (requested && MAP_CONFIG[requested]) ? requested : "300mb";
+}
 
-  meta.textContent = `Run: ${data.run_time} UTC · Generated: ${new Date(data.generated_at).toLocaleString()} · ${frames.length} frames`;
+async function loadMap(mapKey) {
+  const config = MAP_CONFIG[mapKey];
+  if (!config) return;
 
-  showFrame(0);
+  // stop any active playback when switching maps
+  playing = false;
+  clearInterval(playTimer);
+  playBtn.textContent = "▶ Play";
+
+  currentMap = mapKey;
+  title.textContent = config.title;
+  meta.textContent = "Loading...";
+
+  // reflect selection in the URL without a full reload
+  const params = new URLSearchParams(window.location.search);
+  params.set("map", mapKey);
+  history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+
+  const dataDir = `../assets/maps/${config.dir}`;
+  try {
+    const res = await fetch(`${dataDir}/document.json?cachebust=${Date.now()}`);
+    const data = await res.json();
+    frames = data.frames;
+    slider.max = frames.length - 1;
+    meta.textContent = `Run: ${data.run_time} UTC · Generated: ${new Date(data.generated_at).toLocaleString()} · ${frames.length} frames`;
+    showFrame(0);
+  } catch (err) {
+    meta.textContent = "Failed to load map data.";
+    console.error(err);
+  }
 }
 
 function showFrame(i) {
   if (!frames.length) return;
   currentIndex = ((i % frames.length) + frames.length) % frames.length;
   const frame = frames[currentIndex];
-  img.src = `${dataDir}/${frame.file}`;
+  const config = MAP_CONFIG[currentMap];
+  img.src = `../assets/maps/${config.dir}/${frame.file}`;
   slider.value = currentIndex;
 }
 
@@ -114,7 +151,15 @@ playBtn.addEventListener("click", () => {
   }
 });
 
-loadManifest();
+// wire up dropdown links
+document.querySelectorAll('.dropdown .content a[data-map]').forEach(link => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    loadMap(link.dataset.map);
+  });
+});
+
+loadMap(getInitialMap());
 </script>
 
 </body>
