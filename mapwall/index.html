@@ -4,6 +4,59 @@
 <meta charset="UTF-8">
 <title>Weather Map Wall</title>
 <link rel="stylesheet" href="style.css">
+<style>
+.slidecontainer{
+  width:100%
+}
+
+
+.slider{
+  -webkit-appearance: none;
+  width:100%;
+  height:10px;
+  background:#d3d3d3;
+  outline: none;
+  opacity: .7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover{
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #66ccff;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+  transition: transform .15s;
+}
+.slider::-webkit-slider-thumb:hover{
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb{
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #66ccff;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+
+.slider::-moz-range-track{
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: #d3d3d3;
+}
+</style>
 </head>
 <body>
 
@@ -11,7 +64,19 @@
 <div class="dropdown">
   <button class="button">Upper-Air</button>
   <div class="content">
+    <a href="#" data-map="300mb">300mb Analysis</a>
+    <a href="#" data-map="500mb">500mb Analysis</a>
+    <a href="#" data-map="700mb">700mb Analysis</a>
+    <a href="#" data-map="850mb">850mb Analysis</a>
     <!-- <a data-map="...">...</a> -->
+  </div>
+</div>
+
+<div class="dropdown">
+  <button class="button">Current Obs</button>
+  <div class="content">
+    <a href="#" data-map="mrms">MRMS Viewer</a>
+    <a href="#" data-map="soundings">Soundings</a>
   </div>
 </div>
 
@@ -21,13 +86,30 @@
 <img id="mapImage" src="" alt="Weather map frame">
 
 <!-- TODO: first/prev/play/next/last buttons + range slider -->
-<div id="controls"></div>
+<div id="controls">
+  <div class="slidecontainer">
+    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+  </div>
+</div>
 
 <script>
-// TODO: MAP_CONFIG = { key: { dir, title }, ... }
+let frames = Array.from({ length: 53 }, (_, i) =>
+  `assets/maps/upper_level_300mb/${String(i).padStart(2, "0")}.png`
+);
+const slider = document.getElementById('myRange');
+const img = document.getElementById("mapImage");
 
-let frames = [];
-let currentIndex = 0;
+slider.max = frames.length - 1;
+
+function showFrame(i) {
+  img.src = frames[i];
+  slider.value = i;
+}
+showFrame(0);
+
+slider.addEventListener("input", () => {
+  showFrame(Number(slider.value));
+});
 
 function getInitialMap() {
   // TODO: read ?map= from URL, fall back to a default
@@ -39,16 +121,11 @@ async function loadMap(mapKey) {
   // TODO: call showFrame(0)
 }
 
-function showFrame(i) {
-  // TODO: wrap index, set img.src, update slider
-}
-
 // TODO: wire up buttons/slider to call showFrame()
 // TODO: wire up play/pause with setInterval
 // TODO: wire up dropdown clicks to call loadMap()
 
 loadMap(getInitialMap());
 </script>
-
 </body>
 </html>
