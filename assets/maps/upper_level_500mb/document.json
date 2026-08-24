@@ -1,6 +1,6 @@
 {
   "run_time": "2026-08-24 00:00",
-  "generated_at": "2026-08-24T01:28:49.055771Z",
+  "generated_at": "2026-08-24T01:35:08.289243Z",
   "frames": [
     {
       "fxx": 0,
@@ -46,6 +46,71 @@
       "fxx": 8,
       "file": "08.png",
       "valid_time": "08Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 9,
+      "file": "09.png",
+      "valid_time": "09Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 10,
+      "file": "10.png",
+      "valid_time": "10Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 11,
+      "file": "11.png",
+      "valid_time": "11Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 12,
+      "file": "12.png",
+      "valid_time": "12Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 13,
+      "file": "13.png",
+      "valid_time": "13Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 14,
+      "file": "14.png",
+      "valid_time": "14Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 15,
+      "file": "15.png",
+      "valid_time": "15Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 16,
+      "file": "16.png",
+      "valid_time": "16Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 17,
+      "file": "17.png",
+      "valid_time": "17Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 18,
+      "file": "18.png",
+      "valid_time": "18Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 19,
+      "file": "19.png",
+      "valid_time": "19Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 20,
+      "file": "20.png",
+      "valid_time": "20Z Mon Aug 24 2026"
+    },
+    {
+      "fxx": 21,
+      "file": "21.png",
+      "valid_time": "21Z Mon Aug 24 2026"
     }
   ]
 }
