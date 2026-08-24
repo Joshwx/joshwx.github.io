@@ -2,7 +2,7 @@ name: Update Weather Maps
 
 on:
   schedule:
-    - cron: "30 */1 * * *"
+    - cron: "30 3,9,15,21* * *"
   workflow_dispatch:
 
 concurrency:
