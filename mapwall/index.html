@@ -93,39 +93,28 @@
 </div>
 
 <script>
-let frames = Array.from({ length: 53 }, (_, i) =>
-  `assets/maps/upper_level_300mb/${String(i).padStart(2, "0")}.png`
-);
 const slider = document.getElementById('myRange');
 const img = document.getElementById("mapImage");
-
-slider.max = frames.length - 1;
+let frames = [];
 
 function showFrame(i) {
-  img.src = frames[i];
+  img.src = "assets/maps/upper_level_300mb/" + frames[i].file;
   slider.value = i;
 }
-showFrame(0);
+
+async function loadMap() {
+  const res = await fetch("assets/maps/upper_level_300mb/document.json");
+  const data = await res.json();
+  frames = data.frames;
+  slider.max = frames.length - 1;
+  showFrame(0);
+}
 
 slider.addEventListener("input", () => {
   showFrame(Number(slider.value));
 });
 
-function getInitialMap() {
-  // TODO: read ?map= from URL, fall back to a default
-}
-
-async function loadMap(mapKey) {
-  // TODO: fetch `assets/maps/<dir>/document.json`
-  // TODO: set frames, page title/meta text
-  // TODO: call showFrame(0)
-}
-
-// TODO: wire up buttons/slider to call showFrame()
-// TODO: wire up play/pause with setInterval
-// TODO: wire up dropdown clicks to call loadMap()
-
-loadMap(getInitialMap());
+loadMap();
 </script>
 </body>
 </html>
