@@ -1,3 +1,5 @@
+
+
 .dropdown{
     display: inline-block;
     position: relative;
@@ -55,5 +57,10 @@ img{
 }
 
 #controls{
+    flex-shrink: 0;
+}
+
+#navbar{
+    display: flex;
     flex-shrink: 0;
 }
