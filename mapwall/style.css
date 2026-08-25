@@ -30,12 +30,27 @@
     background-color: hsl(0,0%,70%);
 }
 
+html,body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 #mapImage{
-    max-width: 100vw;
-    max-height: 100%;
-    height: auto;
-    width: auto;
-    display: block;
-    margin: 0 auto;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
     object-fit: contain;
+
+}
+
+#controls{
+    flex-shrink: 0;
 }
