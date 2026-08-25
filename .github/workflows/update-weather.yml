@@ -148,6 +148,9 @@ jobs:
           name: maps-metar-mrms
           path: assets/maps/metar_mrms/
 
+      - name: Pull latest changes
+        run: git pull --rebase -X ours origin main
+
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
