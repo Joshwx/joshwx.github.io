@@ -98,12 +98,12 @@ const img = document.getElementById("mapImage");
 let frames = [];
 
 function showFrame(i) {
-  img.src = "assets/maps/upper_level_300mb/" + frames[i].file;
+  img.src = "/assets/maps/upper_level_300mb/" + frames[i].file;
   slider.value = i;
 }
 
 async function loadMap() {
-  const res = await fetch("assets/maps/upper_level_300mb/document.json");
+  const res = await fetch("/assets/maps/upper_level_300mb/document.json");
   const data = await res.json();
   frames = data.frames;
   slider.max = frames.length - 1;
