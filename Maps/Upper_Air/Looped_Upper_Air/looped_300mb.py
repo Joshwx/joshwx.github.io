@@ -73,7 +73,7 @@ def extract_build_data (ds,H, fxx):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'300mb Height (dam), Winds (kts) ', fontsize=22, loc='center')
+    ax.set_title(f'300mb Height (dam), Winds (kts) ', fontsize=23, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
     out_path=os.path.join(output_dir, f'{fxx:02d}.png')
