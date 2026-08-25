@@ -151,7 +151,7 @@ max_hours=51
 #determine if 21 frames or 51
 run_number=target_time.hour
 
-if run_number % 6==0:
+if run_number % 6==3:
     max_hours=52
 else:
     max_hours=22
