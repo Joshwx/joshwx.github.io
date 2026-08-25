@@ -43,7 +43,10 @@ body{
     height: 100vh;
 }
 
-#mapImage{
+img{
+    padding: 0;
+    display: block;
+    margin: 0 auto;
     flex: 1;
     min-height: 0;
     width: 100%;
