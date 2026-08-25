@@ -99,23 +99,46 @@ const img = document.getElementById("mapImage");
 let frames = [];
 
 function showFrame(i) {
-  img.src = "/assets/maps/upper_level_300mb/" + frames[i].file;
-  slider.value = i;
+  const folder=mapFolders[currentMap];
+  img.src=`/assets/maps/${folder}/${frames[i].file}`;
+  slider.value=i;
 }
 
-async function loadMap() {
-  const res = await fetch("/assets/maps/upper_level_300mb/document.json");
+const mapFolders={
+  "300mb":"upper_level_300mb",
+  "500mb":"upper_level_500mb",
+  "700mb":"upper_level_700mb",
+  "850mb":"upper_level_850mb",
+};
+let currentMap="300mb"
+
+async function loadMap(mapName) {
+  currentMap = mapName;
+  const folder = mapFolders[mapName];
+  const res = await fetch(`/assets/maps/${folder}/document.json`);
   const data = await res.json();
   frames = data.frames;
   slider.max = frames.length - 1;
   showFrame(0);
 }
 
+
 slider.addEventListener("input", () => {
   showFrame(Number(slider.value));
 });
 
-loadMap();
+
+document.querySelectorAll('[data-map]').forEach(link=>{
+  link.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if (mapFolders[link.dataset.map]){
+      loadMap(link.dataset.map);
+    }
+  })
+})
+
+
+loadMap(currentMap);
 
 
 </script>
