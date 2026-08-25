@@ -21,12 +21,12 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
-output_dir = 'assets/maps/upper_level_700mb'
+script_dir=os.path.dirname(os.path.abspath(__file__))
+repo_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+output_dir = os.path.join(repo_root, 'assets', 'maps', 'upper_level_700mb')
 os.makedirs(output_dir, exist_ok=True)
 
-script_dir=os.path.dirname(os.path.abspath(__file__))
-cmap_path=os.path.join(script_dir,'..', '..', '..', 'assets', 'cmap', 'MPL_Greens.rgb')
-cmap_greens = load_ncl_rgb(CMAP_PATH)
+cmap_path=os.path.join(repo_root,'assets','cmap','MPL_Greens.rgb')
 
 
 def load_ncl_rgb(filepath, smooth=True):
@@ -52,6 +52,8 @@ def load_ncl_rgb(filepath, smooth=True):
         return LinearSegmentedColormap.from_list('custom_cmap', rgb, N=256)
     else:
         return ListedColormap(rgb)
+
+cmap_greens=load_ncl_rgb(cmap_path)
 
 #function that builds the images with ds and H as arguments
 def extract_build_data (ds,ds2,H, fxx):
@@ -89,7 +91,6 @@ def extract_build_data (ds,ds2,H, fxx):
     smooth_rh = gaussian_filter(mean_rh, 2)
 
 
-    cmap_greens = load_ncl_rgb('C:/Users/sherm/Desktop/CMAP/MPL_Greens.rgb')
 
     # plot settings s
     proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
