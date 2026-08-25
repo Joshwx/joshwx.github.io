@@ -68,7 +68,7 @@ def extract_build_data (ds,H,fxx):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'500mb Height (dam), Winds (kts) ', fontsize=23, loc='center')
+    ax.set_title(f'500mb Height (dam), Winds (kts) ', fontsize=24, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
     out_path = os.path.join(output_dir, f'{fxx:02d}.png')
@@ -84,7 +84,7 @@ max_hours=51
 #determine if 21 frames or 51
 run_number=target_time.hour
 
-if run_number % 6==0:
+if run_number % 6==3:
     max_hours=52
 else:
     max_hours=22
