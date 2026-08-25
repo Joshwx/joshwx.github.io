@@ -84,7 +84,6 @@
 
 <img id="mapImage" src="" alt="Weather map frame">
 
-<!-- TODO: first/prev/play/next/last buttons + range slider -->
 <div id="controls">
   <div class="slidecontainer">
     <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
@@ -107,17 +106,25 @@ const mapFolders={
   "500mb":"upper_level_500mb",
   "700mb":"upper_level_700mb",
   "850mb":"upper_level_850mb",
+  "mrms":"metar_mrms",
 };
 let currentMap="300mb"
 
-async function loadMap(mapName) {
-  currentMap = mapName;
+async function loadMap(mapName){
+  currentMap= mapName;
   const folder = mapFolders[mapName];
-  const res = await fetch(`/assets/maps/${folder}/document.json`);
-  const data = await res.json();
-  frames = data.frames;
-  slider.max = frames.length - 1;
-  showFrame(0);
+
+  if (mapName== 'mrms'){
+    img.src=`/assets/maps/${folder}/latest.png`;
+    slider.style.display='none';
+    return;
+  }
+  slider.style.display="";
+  const res=await fetch(`/assets/maps/${folder}/document.json`);
+  const data = await res.json()
+  frames= data.frames;
+  slider.max=frames.length-1
+  showFrame(0)
 }
 
 
