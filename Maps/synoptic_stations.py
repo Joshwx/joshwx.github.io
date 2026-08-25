@@ -25,6 +25,8 @@ from metpy.units import units
 
 from synoptic import TimeSeries
 
+
+
 # Animation
 from matplotlib.animation import ArtistAnimation, PillowWriter
 from metpy.plots import ctables  # For NWS reflectivity colormap
@@ -38,7 +40,9 @@ import json
 
 
 from synoptic import Latest
-output_dir= '/assets/maps/metar_mrms'
+script_dir=os.path.dirname(os.path.abspath(__file__))
+repo_root=os.path.abspath(os.path.join(script_dir, ".."))
+output_dir=os.path.join(repo_root, 'assets','maps','metar_mrms')
 os.makedirs(output_dir, exist_ok=True)
 ######################### METAR BLOCK #########################
 
