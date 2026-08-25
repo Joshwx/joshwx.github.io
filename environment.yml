@@ -10,6 +10,7 @@ dependencies:
   - pandas
   - metpy
   - cfgrib
+  - beautifulsoup4
   - fsspec
   - s3fs
   - arm_pyart
