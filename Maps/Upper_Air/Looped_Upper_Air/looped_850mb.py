@@ -1,4 +1,8 @@
-import sounderpy as spy
+import os
+
+import matplotlib
+# matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
@@ -13,10 +17,15 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
+from datetime import datetime, timedelta
+import json
 
+
+output_dir = 'assets/maps/upper_level_850mb'
+os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
-def extract_build_data (ds,H):
+def extract_build_data (ds,H,fxx):
     gh = ds['gh'] / 10
     u = ds['u']
     v = ds['v']
@@ -100,15 +109,45 @@ def extract_build_data (ds,H):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'850mb Height (dam), Temp (C, red/blue)', fontsize=26, loc='center')
+    ax.set_title(f'850mb Height (dam), Temp (C, red/blue)', fontsize=24, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
-    return fig, ax
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+    return out_path,valid_time
 
-for fxx in range(0,51,1):
-    H = Herbie("2026-01-24 03:00", model='rap', product='awp236pgrb', fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
-    fig, ax = extract_build_data(ds,H)
+#pull from model
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+max_hours=51
+
+#determine if 21 frames or 51
+run_number=target_time.hour
+
+if run_number % 6==3:
+    max_hours=52
+else:
+    max_hours=22
+
+#create empty list for frames
+frames=[]
+
+
+for fxx in range(0,max_hours,1):
+    try:
+        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=True)
+        out_path, valid_time=extract_build_data(ds, H, fxx)
+        frames.append({"fxx": fxx, "file": os.path.basename(out_path), "valid_time": valid_time})
+        print(f"Saved frame f{fxx:02d}")
+    except Exception as e:
+        print(f"Skipping fxx=P{fxx}: {e}")
+        continue
+
+
+#write document dictionary so the website JS knows what frames exist
+document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
+          'frames':frames}
+with open(os.path.join(output_dir, "document.json"), 'w') as f:
+    json.dump(document, f,indent=2)
+print(f"Done {len(frames)} frames saved")
