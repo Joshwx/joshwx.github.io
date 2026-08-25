@@ -1,0 +1,63 @@
+name: Update MRMS
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-mrms
+  cancel-in-progress: true
+
+jobs:
+  run-metar-mrms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run METAR/MRMS script
+        shell: bash -l {0}
+        env:
+          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
+        run: python "Maps/synoptic_stations.py"
+
+      - name: Upload METAR/MRMS output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-metar-mrms
+          path: assets/maps/metar_mrms/
+
+  commit:
+    needs: run-metar-mrms
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Pull latest changes
+        run: git pull --rebase -X ours origin main
+
+      - name: Download METAR/MRMS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-metar-mrms
+          path: assets/maps/metar_mrms/
+
+      - name: Commit and push updated MRMS
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update MRMS"
+          file_pattern: "assets/maps/metar_mrms/**"

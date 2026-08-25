@@ -60,6 +60,31 @@ jobs:
           name: maps-500mb
           path: assets/maps/upper_level_500mb/
 
+  run-700mb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 700mb script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_700mb.py"
+
+      - name: Upload 700mb output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-700mb
+          path: assets/maps/upper_level_700mb/
+
   run-850mb:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -85,36 +110,8 @@ jobs:
           name: maps-850mb
           path: assets/maps/upper_level_850mb/
 
-  run-metar-mrms:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    continue-on-error: true
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
-
-      - name: Set up conda environment
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          environment-file: environment.yml
-          activate-environment: Map_wall
-          miniforge-version: latest
-          use-mamba: true
-
-      - name: Run METAR/MRMS script
-        shell: bash -l {0}
-        env:
-          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
-        run: python "Maps/synoptic_stations.py"
-
-      - name: Upload METAR/MRMS output
-        uses: actions/upload-artifact@v4
-        with:
-          name: maps-metar-mrms
-          path: assets/maps/metar_mrms/
-
   commit:
-    needs: [ run-300mb, run-500mb, run-850mb, run-metar-mrms ]
+    needs: [ run-300mb, run-500mb, run-700mb, run-850mb ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -138,18 +135,17 @@ jobs:
           name: maps-500mb
           path: assets/maps/upper_level_500mb/
 
+      - name: Download 700mb artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-700mb
+          path: assets/maps/upper_level_700mb/
+
       - name: Download 850mb artifact
         uses: actions/download-artifact@v4
         with:
           name: maps-850mb
           path: assets/maps/upper_level_850mb/
-
-      - name: Download METAR/MRMS artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: maps-metar-mrms
-          path: assets/maps/metar_mrms/
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
