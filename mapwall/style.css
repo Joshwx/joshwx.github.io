@@ -29,3 +29,9 @@
 .dropdown:hover .button{
     background-color: hsl(0,0%,70%);
 }
+
+img{
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+}
