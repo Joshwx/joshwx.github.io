@@ -128,7 +128,7 @@ def extract_build_data (ds,ds2,H, fxx):
     ax.clabel(cf_freez, inline=True, colors='blue', fontsize=15, fmt='%d')
 
     cb = plt.colorbar(cf_rh, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
-    cb.set_label('Wind Speed (kts)', fontsize=16)
+    cb.set_label('Relative Humidity (%)', fontsize=16)
     cb.ax.tick_params(labelsize=16)
 
     # additional plot settings
