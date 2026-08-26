@@ -68,9 +68,9 @@ def extract_build_data (ds,H,fxx):
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
+    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=18, loc='left')
     ax.set_title(f'500mb Height (dam),\n Absolute Vorticity (10^-5 s^-1) ', fontsize=26, loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
+    ax.set_title(f'\nValid: {valid_time}', fontsize=18, loc='right')
 
     out_path = os.path.join(output_dir, f'{fxx:02d}.png')
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
