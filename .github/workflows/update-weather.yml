@@ -60,6 +60,31 @@ jobs:
           name: maps-500mb
           path: assets/maps/upper_level_500mb/
 
+  run-500mb-vort:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 500mb vort script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_500mb_vort.py"
+
+      - name: Upload 500mb vort output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-500mb-vort
+          path: assets/maps/upper_level_500mb_vort/
+
   run-700mb:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -111,7 +136,7 @@ jobs:
           path: assets/maps/upper_level_850mb/
 
   commit:
-    needs: [ run-300mb, run-500mb, run-700mb, run-850mb ]
+    needs: [ run-300mb, run-500mb, run-500mb-vort, run-700mb, run-850mb ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -134,6 +159,12 @@ jobs:
         with:
           name: maps-500mb
           path: assets/maps/upper_level_500mb/
+
+      - name: Download 500mb vort artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-500mb-vort
+          path: assets/maps/upper_level_500mb_vort/
 
       - name: Download 700mb artifact
         uses: actions/download-artifact@v4
