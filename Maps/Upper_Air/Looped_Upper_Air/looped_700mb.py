@@ -135,10 +135,10 @@ def extract_build_data (ds,ds2,H, fxx):
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'700mb Height (dam), Wind (kts), Temp (C, red/blue),\n 700-500mb Mean RH >= 70%', fontsize=26,
+    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
+    ax.set_title(f'700mb Height (dam), Wind (kts), Temp (C),\n 700-500mb Mean RH >= 70%', fontsize=20,
                  loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
+    ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
     out_path = os.path.join(output_dir, f'{fxx:02d}.png')
     plt.savefig(out_path, dpi=150, bbox_inches='tight')

@@ -76,9 +76,9 @@ def extract_build_data (ds,H, fxx):
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=18, loc='left')
-    ax.set_title(f'300mb Height (dam), Winds (kts) ', fontsize=24, loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=18, loc='right')
+    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
+    ax.set_title(f'300mb Height (dam), Winds (kts) ', fontsize=20, loc='center')
+    ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
     out_path=os.path.join(output_dir, f'{fxx:02d}.png')
     plt.savefig(out_path,dpi=150,bbox_inches='tight')
