@@ -68,6 +68,10 @@ def extract_build_data (ds,H, fxx):
              length=8, regrid_shape=15, pivot='middle', transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
+    cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
+    cb.set_label('Wind Speed (kts)', fontsize=16)
+    cb.ax.tick_params(labelsize=16)
+
     # additional plot settings
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))

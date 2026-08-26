@@ -59,6 +59,10 @@ def extract_build_data (ds,H,fxx):
     # vort contour
     cf = ax.contourf(lon, lat, synoptic_scale, levels=list(range(16, 44, 4)),
                      cmap='plasma', transform=ccrs.PlateCarree())
+    cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
+    cb.set_label('10^-5 s^-1', fontsize=16)
+    cb.ax.tick_params(labelsize=16)
+
     # gh heights
     # GH contours
     line = ax.contour(lon, lat, gh_smooth[:, :], levels=list(range(500, 600, 6)), colors='black', linewidths=3,

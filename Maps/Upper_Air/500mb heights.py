@@ -53,13 +53,17 @@ ax=plt.axes(projection=proj)
 ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 #GH contours
 line=ax.contour(lon, lat,gh_smooth[:,:],levels=list(range(500, 600, 6)),colors='black',linewidths=3,
-                transform=ccrs.PlateCarree(), cbar=True, cbar_kwargs={'orientation':'vertical'})
+                transform=ccrs.PlateCarree())
 #wind stuff
 wnd_speed= np.arange(40, 160, 20)
 cf=ax.contourf(lon,lat, speed_500, wnd_speed, cmap='BuPu', transform=ccrs.PlateCarree())
 ax.barbs(lon, lat, u_kts,v_kts,
          length=8, regrid_shape=15, pivot='middle', transform=ccrs.PlateCarree())
 ax.clabel(line,inline=True,colors='black',fontsize=12, fmt='%d')
+cb=plt.colorbar(cf,ax=ax, orientation='horizontal', shrink=.4,pad=.02, aspect=25)
+cb.set_label('Wind Speed (kts)', fontsize=16)
+cb.ax.tick_params(labelsize=16)
+
 
 #additional plot settings
 ax.coastlines('50m')
@@ -89,6 +93,9 @@ ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 #vort contour
 cf=ax.contourf(lon,lat,synoptic_scale, levels=list(range(16,44,4)),
                cmap='plasma', transform=ccrs.PlateCarree())
+cb=plt.colorbar(cf,ax=ax, orientation='horizontal', shrink=.4,pad=.02, aspect=25)
+cb.set_label('10^-5 s^-1', fontsize=16)
+cb.ax.tick_params(labelsize=16)
 #gh heights
 #GH contours
 line=ax.contour(lon, lat,gh_smooth[:,:],levels=list(range(500, 600, 6)),colors='black',linewidths=3,
