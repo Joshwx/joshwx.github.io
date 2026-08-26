@@ -50,7 +50,7 @@ synoptic_token = os.environ["SYNOPTIC_TOKEN"]
 
 #pull metar data from listed bounds (OH Valley and surrounding areas), put into df
 bounds=[-91, -80, 34.5, 41]
-df = TimeSeries(bbox=bounds,vars='metar',recent=timedelta(minutes=90),token=synoptic_token,).df()
+df = TimeSeries(bbox=bounds,vars='metar',recent=timedelta(minutes=30),token=synoptic_token,).df()
 metars=df
 
 #extract raw code from metar df with nulls dropped

@@ -5,16 +5,25 @@ import numpy as np
 import metpy
 import pandas as pd
 import datetime
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-#get utc time for the most recent one
-target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+# pull current time
+time_now=datetime.datetime.utcnow()
+sounding_time_morning=12
+sounding_time_evening=00
+
+
 
 site_id='BNA'
-year=target_time.strftime('%Y')
-month=target_time.strftime('%m')
-day=target_time.strftime('%d')
-hour=target_time.strftime('%H')
+year=time_now.strftime('%Y')
+month=time_now.strftime('%m')
+day=time_now.strftime('%d')
+
+if time_now.hour>=12 and time_now.hour<=23:
+    hour=sounding_time_morning
+else:
+    hour=sounding_time_evening
+
 
 obs_data=spy.get_obs_data(site_id,year,month,day,hour)
 print('plotting...')
@@ -23,42 +32,9 @@ sounding=spy.build_sounding(obs_data, color_blind=False,save=True, filename='sou
 plt.tight_layout()
 plt.show()
 
-site_id='ILN'
-year=target_time.strftime('%Y')
-month=target_time.strftime('%m')
-day=target_time.strftime('%d')
-hour=target_time.strftime('%H')
+def get_sounding ():
+    # pull current time
+    time_now = datetime.datetime.utcnow()
+    sounding_time_morning = 12
+    sounding_time_evening = 00
 
-obs_data=spy.get_obs_data(site_id,year,month,day,hour)
-print('plotting...')
-sounding=spy.build_sounding(obs_data, color_blind=False,save=True, filename='sounding')
-
-plt.tight_layout()
-plt.show()
-
-
-site_id='ILX'
-year=target_time.strftime('%Y')
-month=target_time.strftime('%m')
-day=target_time.strftime('%d')
-hour=target_time.strftime('%H')
-
-obs_data=spy.get_obs_data(site_id,year,month,day,hour)
-print('plotting...')
-sounding=spy.build_sounding(obs_data, color_blind=False,save=True, filename='sounding')
-
-plt.tight_layout()
-plt.show()
-
-site_id='SGF'
-year=target_time.strftime('%Y')
-month=target_time.strftime('%m')
-day=target_time.strftime('%d')
-hour=target_time.strftime('%H')
-
-obs_data=spy.get_obs_data(site_id,year,month,day,hour)
-print('plotting...')
-sounding=spy.build_sounding(obs_data, color_blind=False,save=True, filename='sounding')
-
-plt.tight_layout()
-plt.show()
