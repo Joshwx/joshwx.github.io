@@ -26,8 +26,8 @@ os.makedirs(output_dir, exist_ok=True)
 #function that builds the images with ds and H as arguments
 def extract_build_data (ds,H,fxx):
     gh = ds['gh'] / 10
-    u = ds['u']
-    v = ds['v']
+    u = ds['u'].squeeze()
+    v = ds['v'].squeeze()
     lat = ds['latitude']
     lon = ds['longitude']
     time = ds['time']
