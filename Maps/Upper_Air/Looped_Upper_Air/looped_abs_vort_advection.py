@@ -73,14 +73,13 @@ def extract_build_data (ds,H, fxx):
     cb.set_label('10^-9 s^-2', fontsize=16)
     cb.ax.tick_params(labelsize=16)
 
-    cf_red = ax.contour(lon, lat, vort_smooth, levels=(range(-50, -5, 5)), colors='blue', linewidths=1.5,
+    cf_red = ax.contour(lon, lat, vort_smooth, levels=(range(-50, -5, 5)), colors='red', linewidths=1.5,
                         linestyles='dashed', transform=ccrs.PlateCarree())
-    ax.clabel(cf_red, inline=True, colors='blue', fontsize=15, fmt='%d')
     ax.clabel(cf_red, inline=True, colors='red', fontsize=15, fmt='%d')
 
-    cf_blue = ax.contour(lon, lat, vort_smooth, levels=(range(5, 50, 5)), colors='red', linewidths=1.5,
-                         linestyles='dashed', transform=ccrs.PlateCarree())
-    ax.clabel(cf_blue, inline=True, colors='red', fontsize=15, fmt='%d')
+    cf_blue = ax.contour(lon, lat, vort_smooth, levels=(range(5, 50, 5)), colors='blue', linewidths=1.5,
+                        transform=ccrs.PlateCarree())
+    ax.clabel(cf_blue, inline=True, colors='blue', fontsize=15, fmt='%d')
     # wind stuff
     wnd_speed = np.arange(40, 160, 20)
     ax.barbs(lon, lat, u_kts, v_kts,
