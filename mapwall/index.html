@@ -78,6 +78,13 @@
       <a href="#"data-map="soundings">Soundings</a>
     </div>
   </div>
+    </div>
+  <div class="dropdown">
+    <button class="button">QG Theory</button>
+    <div class="content">
+      <a href="#"data-map="vort_adv">Vorticity Advection</a>
+    </div>
+  </div>
 </nav>
 
 <h1 id="pageTitle"></h1>
@@ -109,8 +116,9 @@ const mapFolders={
   "850mb":"upper_level_850mb",
   "Vort":"upper_level_500mb_vort",
   "mrms":"metar_mrms",
+  "vort_adv":"abs_vort_advection",
 };
-let currentMap="300mb"
+let currentMap="mrms"
 
 async function loadMap(mapName){
   currentMap= mapName;
