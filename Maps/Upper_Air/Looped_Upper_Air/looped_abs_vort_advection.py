@@ -20,9 +20,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
-
-
-output_dir = 'assets/maps/abs_vort_advection'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
+output_dir = os.path.join(REPO_ROOT, 'assets', 'maps', 'abs_vort_advection')
 os.makedirs(output_dir, exist_ok=True)
 
 def extract_build_data (ds,H, fxx):
@@ -73,14 +73,14 @@ def extract_build_data (ds,H, fxx):
     cb.set_label('10^-9 s^-2', fontsize=16)
     cb.ax.tick_params(labelsize=16)
 
-    cf_red = ax.contour(lon, lat, vort_smooth, levels=(range(-50, -5, 5)), colors='red', linewidths=1.5,
+    cf_red = ax.contour(lon, lat, vort_smooth, levels=(range(-50, -5, 5)), colors='blue', linewidths=1.5,
                         linestyles='dashed', transform=ccrs.PlateCarree())
+    ax.clabel(cf_red, inline=True, colors='blue', fontsize=15, fmt='%d')
     ax.clabel(cf_red, inline=True, colors='red', fontsize=15, fmt='%d')
 
-    cf_blue = ax.contour(lon, lat, vort_smooth, levels=(range(5, 50, 5)), colors='blue', linewidths=1.5,
+    cf_blue = ax.contour(lon, lat, vort_smooth, levels=(range(5, 50, 5)), colors='red', linewidths=1.5,
                          linestyles='dashed', transform=ccrs.PlateCarree())
-    ax.clabel(cf_blue, inline=True, colors='blue', fontsize=15, fmt='%d')
-
+    ax.clabel(cf_blue, inline=True, colors='red', fontsize=15, fmt='%d')
     # wind stuff
     wnd_speed = np.arange(40, 160, 20)
     ax.barbs(lon, lat, u_kts, v_kts,
