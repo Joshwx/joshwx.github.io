@@ -1,0 +1,116 @@
+{
+  "run_time": "2026-08-27 02:00",
+  "generated_at": "2026-08-27T03:34:57.102798Z",
+  "frames": [
+    {
+      "fxx": 0,
+      "file": "00.png",
+      "valid_time": "02Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 1,
+      "file": "01.png",
+      "valid_time": "03Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 2,
+      "file": "02.png",
+      "valid_time": "04Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 3,
+      "file": "03.png",
+      "valid_time": "05Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 4,
+      "file": "04.png",
+      "valid_time": "06Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 5,
+      "file": "05.png",
+      "valid_time": "07Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 6,
+      "file": "06.png",
+      "valid_time": "08Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 7,
+      "file": "07.png",
+      "valid_time": "09Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 8,
+      "file": "08.png",
+      "valid_time": "10Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 9,
+      "file": "09.png",
+      "valid_time": "11Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 10,
+      "file": "10.png",
+      "valid_time": "12Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 11,
+      "file": "11.png",
+      "valid_time": "13Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 12,
+      "file": "12.png",
+      "valid_time": "14Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 13,
+      "file": "13.png",
+      "valid_time": "15Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 14,
+      "file": "14.png",
+      "valid_time": "16Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 15,
+      "file": "15.png",
+      "valid_time": "17Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 16,
+      "file": "16.png",
+      "valid_time": "18Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 17,
+      "file": "17.png",
+      "valid_time": "19Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 18,
+      "file": "18.png",
+      "valid_time": "20Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 19,
+      "file": "19.png",
+      "valid_time": "21Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 20,
+      "file": "20.png",
+      "valid_time": "22Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 21,
+      "file": "21.png",
+      "valid_time": "23Z Thu Aug 27 2026"
+    }
+  ]
+}
