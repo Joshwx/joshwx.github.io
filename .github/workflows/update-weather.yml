@@ -266,6 +266,7 @@ jobs:
           path: assets/maps/850_advection/
 
       - name: Download q-vectors artifact
+        if: needs.run-q-vectors.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: maps-q-vectors
