@@ -60,7 +60,7 @@ def extract_build_data (ds,H,fxx):
     wnd_speed = np.arange(40, 160, 20)
     cf = ax.contourf(lon, lat, speed_500, wnd_speed, cmap='BuPu', transform=ccrs.PlateCarree())
     ax.barbs(lon, lat, u_kts, v_kts,
-             length=8, regrid_shape=15, pivot='middle', transform=ccrs.PlateCarree())
+             length=8, regrid_shape=12, pivot='middle', transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
     cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)

@@ -86,7 +86,7 @@ def extract_build_data (ds,H,fxx):
     speed_850 = np.sqrt(u_kts ** 2 + v_kts ** 2)
     # wind=ax.contourf(lon,lat,speed_850, wnd_speed, cmap='turbo', transform=ccrs.PlateCarree())
     ax.barbs(lon, lat, u_masked, v_masked,
-             length=8, regrid_shape=15, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
+             length=8, regrid_shape=12, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
     # temp contours

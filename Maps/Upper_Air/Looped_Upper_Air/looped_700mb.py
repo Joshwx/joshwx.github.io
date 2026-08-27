@@ -109,7 +109,7 @@ def extract_build_data (ds,ds2,H, fxx):
 
     # wind stuff
     ax.barbs(lon, lat, u_kts, v_kts,
-             length=8, regrid_shape=15, pivot='middle', transform=ccrs.PlateCarree())
+             length=8, regrid_shape=12, pivot='middle', transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
     # temp contours
