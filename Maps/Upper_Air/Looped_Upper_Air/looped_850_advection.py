@@ -74,14 +74,16 @@ def extract_build_data (ds,H, fxx):
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 
     # advection stuff
-    cint = np.arange(-8, 9)
+    cint = np.arange(-10, 10)
     levels=cint[cint!=0]
     cf = ax.contourf(lon, lat, advection_masked, cint[cint != 0], extend='both', cmap='bwr',
                      transform=ccrs.PlateCarree())
     line1 = ax.contour(lon, lat, advection_masked,levels, colors='black', linewidths=.5,
                        transform=ccrs.PlateCarree())
     ax.clabel(line1, inline=True, colors='black', fontsize=12, fmt='%d')
-
+    cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
+    cb.set_label('(10^-5 C/3hr)', fontsize=16)
+    cb.ax.tick_params(labelsize=16)
     #Temp contours
     cf_red = ax.contour(lon, lat, temp_c_smooth, levels=(range(-40, 40, 2)), colors='red', linewidths=1.5,
                         linestyles='dashed', transform=ccrs.PlateCarree())
