@@ -22,7 +22,7 @@ import json
 
 
 
-output_dir = '../../../assets/maps/abs_vort_advection'
+output_dir = 'assets/maps/abs_vort_advection'
 os.makedirs(output_dir, exist_ok=True)
 
 def extract_build_data (ds,H, fxx):
