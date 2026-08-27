@@ -270,7 +270,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: maps-q-vectors
-          path: assets/maps/q_vectors/
+          path: assets/maps/q_vector/
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
