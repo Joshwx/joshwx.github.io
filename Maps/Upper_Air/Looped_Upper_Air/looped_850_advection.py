@@ -74,7 +74,7 @@ def extract_build_data (ds,H, fxx):
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 
     # advection stuff
-    cint = np.arange(-10, 10)
+    cint = np.arange(-10, 11)
     levels=cint[cint!=0]
     cf = ax.contourf(lon, lat, advection_masked, cint[cint != 0], extend='both', cmap='bwr',
                      transform=ccrs.PlateCarree())
@@ -104,7 +104,7 @@ def extract_build_data (ds,H, fxx):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
-    ax.set_title(f'850mb Temperature Advection (10^-5 C/3hr)', fontsize=20, loc='center')
+    ax.set_title(f'850mb Temperature Advection\n (10^-5 C/3hr)', fontsize=20, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
     out_path = os.path.join(output_dir, f'{fxx:02d}.png')
