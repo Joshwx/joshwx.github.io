@@ -68,7 +68,7 @@ def extract_build_data (ds,H, fxx):
 
     # vort contour
     cf = ax.contourf(lon, lat, vort_smooth, levels=list(range(-52, 52, 2)), extend='both',
-                     cmap='bwr_r', transform=ccrs.PlateCarree())
+                     cmap='bwr', transform=ccrs.PlateCarree())
     cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
     cb.set_label('10^-9 s^-2', fontsize=16)
     cb.ax.tick_params(labelsize=16)
