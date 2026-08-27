@@ -1,6 +1,6 @@
 {
   "run_time": "2026-08-27 00:00",
-  "generated_at": "2026-08-27T01:29:34.013457Z",
+  "generated_at": "2026-08-27T01:48:28.613361Z",
   "frames": [
     {
       "fxx": 0,
@@ -91,6 +91,26 @@
       "fxx": 17,
       "file": "17.png",
       "valid_time": "17Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 18,
+      "file": "18.png",
+      "valid_time": "18Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 19,
+      "file": "19.png",
+      "valid_time": "19Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 20,
+      "file": "20.png",
+      "valid_time": "20Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 21,
+      "file": "21.png",
+      "valid_time": "21Z Thu Aug 27 2026"
     }
   ]
 }

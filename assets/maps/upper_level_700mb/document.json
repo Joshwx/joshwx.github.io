@@ -1,6 +1,6 @@
 {
   "run_time": "2026-08-27 00:00",
-  "generated_at": "2026-08-27T01:28:35.604111Z",
+  "generated_at": "2026-08-27T01:49:06.659244Z",
   "frames": [
     {
       "fxx": 0,
@@ -75,6 +75,41 @@
     {
       "fxx": 14,
       "file": "14.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 15,
+      "file": "15.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 16,
+      "file": "16.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 17,
+      "file": "17.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 18,
+      "file": "18.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 19,
+      "file": "19.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 20,
+      "file": "20.png",
+      "valid_time": "00Z Thu Aug 27 2026"
+    },
+    {
+      "fxx": 21,
+      "file": "21.png",
       "valid_time": "00Z Thu Aug 27 2026"
     }
   ]
