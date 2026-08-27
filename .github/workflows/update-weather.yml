@@ -208,7 +208,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maps-q-vectors
-          path: assets/maps/q_vectors/
+          path: assets/maps/q_vector/
 
   commit:
     needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors ]
