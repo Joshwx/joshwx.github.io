@@ -1,11 +1,16 @@
 {
   "run_time": "2026-08-26 23:00",
-  "generated_at": "2026-08-27T01:21:30.018888Z",
+  "generated_at": "2026-08-27T01:29:10.721953Z",
   "frames": [
     {
       "fxx": 0,
       "file": "00.png",
       "valid_time": "23Z Wed Aug 26 2026"
+    },
+    {
+      "fxx": 1,
+      "file": "01.png",
+      "valid_time": "00Z Thu Aug 27 2026"
     },
     {
       "fxx": 2,
