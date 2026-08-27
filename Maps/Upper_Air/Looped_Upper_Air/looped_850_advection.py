@@ -1,4 +1,9 @@
-import sounderpy as spy
+
+import os
+
+import matplotlib
+# matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
@@ -13,10 +18,14 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
+from datetime import datetime, timedelta
+import json
 
+output_dir = 'assets/maps/850_advection'
+os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
-def extract_build_data (ds,H):
+def extract_build_data (ds,H, fxx):
     gh = ds['gh'] / 10
     u = ds['u']
     v = ds['v']
@@ -66,12 +75,17 @@ def extract_build_data (ds,H):
 
     # advection stuff
     cint = np.arange(-8, 9)
+    levels=cint[cint!=0]
     cf = ax.contourf(lon, lat, advection_masked, cint[cint != 0], extend='both', cmap='bwr',
                      transform=ccrs.PlateCarree())
-    line1 = ax.contour(lon, lat, advection_masked, colors='black', linewidths=.5,
+    line1 = ax.contour(lon, lat, advection_masked,levels, colors='black', linewidths=.5,
                        transform=ccrs.PlateCarree())
     ax.clabel(line1, inline=True, colors='black', fontsize=12, fmt='%d')
 
+    #Temp contours
+    cf_red = ax.contour(lon, lat, temp_c_smooth, levels=(range(-40, 40, 2)), colors='red', linewidths=1.5,
+                        linestyles='dashed', transform=ccrs.PlateCarree())
+    ax.clabel(cf_red, inline=True, colors='red', fontsize=15, fmt='%d')
     # GH contours
     line = ax.contour(lon, lat, gh_smooth, levels=list(range(90, 300, 3)), colors='black', linewidths=3,
                       transform=ccrs.PlateCarree())
@@ -80,27 +94,56 @@ def extract_build_data (ds,H):
     speed_850 = np.sqrt(u_kts ** 2 + v_kts ** 2)
     # wind=ax.contourf(lon,lat,speed_850, wnd_speed, cmap='turbo', transform=ccrs.PlateCarree())
     ax.barbs(lon, lat, u_masked, v_masked,
-             length=8, regrid_shape=15, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
+             length=8, regrid_shape=12, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
     # additional plot settings
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'850mb Temperature Advection (10^-5 C/3hr)', fontsize=26, loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
+    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
+    ax.set_title(f'850mb Temperature Advection (10^-5 C/3hr)', fontsize=20, loc='center')
+    ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
 
-    return fig, ax
+    return out_path, valid_time
 
-for fxx in range(0,52,1):
-    #H and ds are the two products that are going into every figure so loop through them between the forecast hours
-    #they also are function calls
-    H = Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
-    #you are calling the return products and using the func to use ds and H to plot data
-    fig, ax = extract_build_data(ds,H)
+
+#pull from model
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=90)).tz_localize(None).floor('h')
+print('looking for run', target_time)
+max_hours=52
+
+#determine if 21 frames or 51
+run_number=target_time.hour
+
+if run_number % 6==3:
+    max_hours=52
+else:
+    max_hours=22
+
+
+#create empty list for frames
+frames=[]
+for fxx in range(0,max_hours,1):
+    try:
+        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=True)
+        out_path, valid_time=extract_build_data(ds, H, fxx)
+        frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
+        print(f"Saved frame f{fxx:02d}")
+    except Exception as e:
+        print(f"Skipping fxx=P{fxx}: {e}")
+        continue
+
+
+
+#write document dictionary so the website JS knows what frames exist
+document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
+          'frames':frames}
+with open(os.path.join(output_dir, "document.json"), 'w') as f:
+    json.dump(document, f,indent=2)
+print(f"Done {len(frames)} frames saved")
