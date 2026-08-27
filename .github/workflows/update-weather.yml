@@ -185,8 +185,33 @@ jobs:
           name: maps-850-advection
           path: assets/maps/850_advection/
 
+  run-q-vectors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run q-vectors script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_q_vectors.py"
+
+      - name: Upload q-vectors output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-q-vectors
+          path: assets/maps/q_vectors/
+
   commit:
-    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection ]
+    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -239,6 +264,12 @@ jobs:
         with:
           name: maps-850-advection
           path: assets/maps/850_advection/
+
+      - name: Download q-vectors artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-q-vectors
+          path: assets/maps/q_vectors/
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
