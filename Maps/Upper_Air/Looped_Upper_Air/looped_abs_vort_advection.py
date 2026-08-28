@@ -1,3 +1,4 @@
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 import os
 
 import matplotlib
@@ -20,10 +21,43 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', '..'))
-output_dir = os.path.join(REPO_ROOT, 'assets', 'maps', 'abs_vort_advection')
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+repo_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+output_dir = os.path.join(repo_root, 'assets', 'maps', 'abs_vort_advection')
 os.makedirs(output_dir, exist_ok=True)
+
+
+cmap_path=os.path.join(repo_root,'assets','cmap','hotcold_18lev.rgb')
+
+
+def load_ncl_rgb(filepath, smooth=True):
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+
+    rgb_vals = []
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith(';') or line.startswith('#') or line.startswith('!') or '=' in line:
+            continue
+        parts = line.split()
+        if len(parts) >= 3:
+            rgb_vals.append([float(x) for x in parts[:3]])
+
+    rgb = np.array(rgb_vals)
+
+    # normalize only if values are in 0-255 range
+    if rgb.max() > 1.0:
+        rgb = rgb / 255.0
+
+    if smooth:
+        return LinearSegmentedColormap.from_list('custom_cmap', rgb, N=256)
+    else:
+        return ListedColormap(rgb)
+
+cmap=load_ncl_rgb(cmap_path)
+
+
 
 def extract_build_data (ds,H, fxx):
     gh = ds['gh'] / 10
@@ -68,7 +102,7 @@ def extract_build_data (ds,H, fxx):
 
     # vort contour
     cf = ax.contourf(lon, lat, vort_smooth, levels=list(range(-52, 52, 2)), extend='both',
-                     cmap='bwr', transform=ccrs.PlateCarree())
+                     cmap=cmap, transform=ccrs.PlateCarree())
     cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
     cb.set_label('10^-9 s^-2', fontsize=16)
     cb.ax.tick_params(labelsize=16)
