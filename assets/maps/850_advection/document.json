@@ -1,266 +1,116 @@
 {
-  "run_time": "2026-08-28 15:00",
-  "generated_at": "2026-08-28T17:31:06.467950Z",
+  "run_time": "2026-08-29 02:00",
+  "generated_at": "2026-08-29T04:13:07.706644Z",
   "frames": [
     {
       "fxx": 0,
       "file": "00.png",
-      "valid_time": "15Z Fri Aug 28 2026"
+      "valid_time": "02Z Sat Aug 29 2026"
     },
     {
       "fxx": 1,
       "file": "01.png",
-      "valid_time": "16Z Fri Aug 28 2026"
+      "valid_time": "03Z Sat Aug 29 2026"
     },
     {
       "fxx": 2,
       "file": "02.png",
-      "valid_time": "17Z Fri Aug 28 2026"
+      "valid_time": "04Z Sat Aug 29 2026"
     },
     {
       "fxx": 3,
       "file": "03.png",
-      "valid_time": "18Z Fri Aug 28 2026"
+      "valid_time": "05Z Sat Aug 29 2026"
     },
     {
       "fxx": 4,
       "file": "04.png",
-      "valid_time": "19Z Fri Aug 28 2026"
+      "valid_time": "06Z Sat Aug 29 2026"
     },
     {
       "fxx": 5,
       "file": "05.png",
-      "valid_time": "20Z Fri Aug 28 2026"
+      "valid_time": "07Z Sat Aug 29 2026"
     },
     {
       "fxx": 6,
       "file": "06.png",
-      "valid_time": "21Z Fri Aug 28 2026"
+      "valid_time": "08Z Sat Aug 29 2026"
     },
     {
       "fxx": 7,
       "file": "07.png",
-      "valid_time": "22Z Fri Aug 28 2026"
+      "valid_time": "09Z Sat Aug 29 2026"
     },
     {
       "fxx": 8,
       "file": "08.png",
-      "valid_time": "23Z Fri Aug 28 2026"
+      "valid_time": "10Z Sat Aug 29 2026"
     },
     {
       "fxx": 9,
       "file": "09.png",
-      "valid_time": "00Z Sat Aug 29 2026"
+      "valid_time": "11Z Sat Aug 29 2026"
     },
     {
       "fxx": 10,
       "file": "10.png",
-      "valid_time": "01Z Sat Aug 29 2026"
+      "valid_time": "12Z Sat Aug 29 2026"
     },
     {
       "fxx": 11,
       "file": "11.png",
-      "valid_time": "02Z Sat Aug 29 2026"
+      "valid_time": "13Z Sat Aug 29 2026"
     },
     {
       "fxx": 12,
       "file": "12.png",
-      "valid_time": "03Z Sat Aug 29 2026"
+      "valid_time": "14Z Sat Aug 29 2026"
     },
     {
       "fxx": 13,
       "file": "13.png",
-      "valid_time": "04Z Sat Aug 29 2026"
+      "valid_time": "15Z Sat Aug 29 2026"
     },
     {
       "fxx": 14,
       "file": "14.png",
-      "valid_time": "05Z Sat Aug 29 2026"
+      "valid_time": "16Z Sat Aug 29 2026"
     },
     {
       "fxx": 15,
       "file": "15.png",
-      "valid_time": "06Z Sat Aug 29 2026"
+      "valid_time": "17Z Sat Aug 29 2026"
     },
     {
       "fxx": 16,
       "file": "16.png",
-      "valid_time": "07Z Sat Aug 29 2026"
+      "valid_time": "18Z Sat Aug 29 2026"
     },
     {
       "fxx": 17,
       "file": "17.png",
-      "valid_time": "08Z Sat Aug 29 2026"
+      "valid_time": "19Z Sat Aug 29 2026"
     },
     {
       "fxx": 18,
       "file": "18.png",
-      "valid_time": "09Z Sat Aug 29 2026"
+      "valid_time": "20Z Sat Aug 29 2026"
     },
     {
       "fxx": 19,
       "file": "19.png",
-      "valid_time": "10Z Sat Aug 29 2026"
+      "valid_time": "21Z Sat Aug 29 2026"
     },
     {
       "fxx": 20,
       "file": "20.png",
-      "valid_time": "11Z Sat Aug 29 2026"
+      "valid_time": "22Z Sat Aug 29 2026"
     },
     {
       "fxx": 21,
       "file": "21.png",
-      "valid_time": "12Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 22,
-      "file": "22.png",
-      "valid_time": "13Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 23,
-      "file": "23.png",
-      "valid_time": "14Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 24,
-      "file": "24.png",
-      "valid_time": "15Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 25,
-      "file": "25.png",
-      "valid_time": "16Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 26,
-      "file": "26.png",
-      "valid_time": "17Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 27,
-      "file": "27.png",
-      "valid_time": "18Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 28,
-      "file": "28.png",
-      "valid_time": "19Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 29,
-      "file": "29.png",
-      "valid_time": "20Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 30,
-      "file": "30.png",
-      "valid_time": "21Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 31,
-      "file": "31.png",
-      "valid_time": "22Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 32,
-      "file": "32.png",
       "valid_time": "23Z Sat Aug 29 2026"
-    },
-    {
-      "fxx": 33,
-      "file": "33.png",
-      "valid_time": "00Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 34,
-      "file": "34.png",
-      "valid_time": "01Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 35,
-      "file": "35.png",
-      "valid_time": "02Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 36,
-      "file": "36.png",
-      "valid_time": "03Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 37,
-      "file": "37.png",
-      "valid_time": "04Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 38,
-      "file": "38.png",
-      "valid_time": "05Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 39,
-      "file": "39.png",
-      "valid_time": "06Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 40,
-      "file": "40.png",
-      "valid_time": "07Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 41,
-      "file": "41.png",
-      "valid_time": "08Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 42,
-      "file": "42.png",
-      "valid_time": "09Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 43,
-      "file": "43.png",
-      "valid_time": "10Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 44,
-      "file": "44.png",
-      "valid_time": "11Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 45,
-      "file": "45.png",
-      "valid_time": "12Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 46,
-      "file": "46.png",
-      "valid_time": "13Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 47,
-      "file": "47.png",
-      "valid_time": "14Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 48,
-      "file": "48.png",
-      "valid_time": "15Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 49,
-      "file": "49.png",
-      "valid_time": "16Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 50,
-      "file": "50.png",
-      "valid_time": "17Z Sun Aug 30 2026"
-    },
-    {
-      "fxx": 51,
-      "file": "51.png",
-      "valid_time": "18Z Sun Aug 30 2026"
     }
   ]
 }
