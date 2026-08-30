@@ -20,6 +20,7 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 from datetime import datetime, timedelta
 import json
+import matplotlib.colors as mcolors
 
 output_dir = 'assets/maps/850_advection'
 os.makedirs(output_dir, exist_ok=True)
@@ -76,7 +77,8 @@ def extract_build_data (ds,H, fxx):
     # advection stuff
     cint = np.arange(-10, 11)
     levels=cint[cint!=0]
-    cf = ax.contourf(lon, lat, advection_masked, cint[cint != 0], extend='both', cmap='bwr',
+    norm=mcolors.BoundaryNorm(levels,ncolors=256, extend='both')
+    cf = ax.contourf(lon, lat, advection_masked, levels,norm=norm, extend='both', cmap='bwr',
                      transform=ccrs.PlateCarree())
     line1 = ax.contour(lon, lat, advection_masked,levels, colors='black', linewidths=.5,
                        transform=ccrs.PlateCarree())

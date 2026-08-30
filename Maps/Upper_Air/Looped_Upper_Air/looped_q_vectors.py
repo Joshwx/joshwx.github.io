@@ -19,6 +19,7 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 from datetime import datetime, timedelta
 import json
+import matplotlib.colors as mcolors
 
 output_dir = 'assets/maps/q_vector'
 os.makedirs(output_dir, exist_ok=True)
@@ -112,7 +113,8 @@ def extract_build_data (H, fxx):
 
     # qvector stuff
     clevs_qdiv = list(range(-35, -4, 5)) + list(range(5, 36, 5))
-    cf = ax.contourf(lon, lat, q_div_smooth, clevs_qdiv, cmap='bwr_r', extend='both', transform=ccrs.PlateCarree())
+    norm=mcolors.BoundaryNorm(clevs_qdiv,ncolors=256,extend='both')
+    cf = ax.contourf(lon, lat, q_div_smooth, clevs_qdiv, cmap='bwr_r',norm=norm, extend='both', transform=ccrs.PlateCarree())
     line1 = ax.contour(lon, lat, q_div_smooth, colors='black', linewidths=1.5,
                        transform=ccrs.PlateCarree())
     ax.clabel(line1, inline=True, colors='black', fontsize=14, fmt='%d')
