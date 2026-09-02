@@ -25,6 +25,32 @@ jobs:
           miniforge-version: latest
           use-mamba: true
 
+      - name: Check token is set
+        shell: bash -l {0}
+        env:
+          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
+        run: |
+          if [ -z "$SYNOPTIC_TOKEN" ]; then
+            echo "::error::SYNOPTIC_TOKEN is empty or unset"
+          else
+            echo "Token present, length: ${#SYNOPTIC_TOKEN}"
+          fi
+
+      - name: Debug Synoptic API status
+        shell: bash -l {0}
+        env:
+          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
+        run: |
+          curl -s -o /dev/null -w "HTTP status: %{http_code}\n" "https://api.synopticdata.com/v2/stations/metadata?token=${SYNOPTIC_TOKEN}&stid=wbb"
+
+      - name: Debug Synoptic API response
+        shell: bash -l {0}
+        env:
+          SYNOPTIC_TOKEN: ${{ secrets.SYNOPTIC_TOKEN }}
+        run: |
+          curl -s "https://api.synopticdata.com/v2/stations/metadata?token=${SYNOPTIC_TOKEN}&stid=wbb" | head -c 2000
+          echo
+
       - name: Run METAR/MRMS script
         shell: bash -l {0}
         env:
