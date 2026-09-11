@@ -28,7 +28,7 @@ jobs:
 
       - name: Run SounderPY RAOB script
         shell: bash -l {0}
-        run: python "Maps/SounderPY RAOB.py"
+        run: python "Maps/Soundings/SounderPy_RAOB.py"
 
       - name: Upload sounding output
         uses: actions/upload-artifact@v4
