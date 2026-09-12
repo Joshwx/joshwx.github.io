@@ -5,10 +5,9 @@ import json
 import datetime
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-repo_root = os.path.abspath(os.path.join(script_dir, '../../..', '..', '..'))
-output_dir = os.path.join(repo_root, '../../assets', 'soundings')
+repo_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
+output_dir = os.path.join(repo_root, 'assets', 'soundings')
 os.makedirs(output_dir, exist_ok=True)
-
 
 def get_sounding_time():
     time_now = datetime.datetime.utcnow()
