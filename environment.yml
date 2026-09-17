@@ -21,5 +21,5 @@ dependencies:
   - pip:
     - "matplotlib<3.10"
     - herbie-data
-    - sounderpy==3.2.0
+    - git+https://github.com/kylejgillett/sounderpy.git@v3.2.0
     - "s3fs==2026.7.0"
