@@ -39,6 +39,8 @@ import pyart
 import json
 
 
+
+
 from synoptic import Latest
 script_dir=os.path.dirname(os.path.abspath(__file__))
 repo_root=os.path.abspath(os.path.join(script_dir, ".."))
@@ -46,7 +48,9 @@ output_dir=os.path.join(repo_root, 'assets','maps','metar_mrms')
 os.makedirs(output_dir, exist_ok=True)
 ######################### METAR BLOCK #########################
 
+
 synoptic_token = os.environ["SYNOPTIC_TOKEN"]
+
 
 #pull metar data from listed bounds (OH Valley and surrounding areas), put into df
 bounds=[-91, -80, 34.5, 41]
