@@ -25,7 +25,7 @@ def get_sounding_time():
 
 hour, year, month, day = get_sounding_time()
 
-sites = ['BNA', 'ILN']
+sites = ['BNA']
 frames = []
 
 for site in sites:
