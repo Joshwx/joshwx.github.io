@@ -1,5 +1,10 @@
 {
-  "run_time": "2026-09-30 12:00",
-  "generated_at": "2026-09-30T18:14:06.809198Z",
-  "frames": []
+  "run_time": "2026-10-01 00:00",
+  "generated_at": "2026-10-01T06:57:44.484695Z",
+  "frames": [
+    {
+      "site": "BNA",
+      "file": "sounding_BNA.png"
+    }
+  ]
 }
