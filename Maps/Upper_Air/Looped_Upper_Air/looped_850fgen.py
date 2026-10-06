@@ -109,6 +109,6 @@ def extract_build_data (ds,H):
     return fig,ax
 
 for fxx in range(0,52,1):
-    H = Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=fxx)
+    H = Herbie("2026-01-24 00:00", model="gfs", product="pgrb2.0p25", fxx=fxx)
     ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
     fig,ax= extract_build_data(ds,H)

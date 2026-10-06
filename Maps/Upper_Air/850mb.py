@@ -16,7 +16,7 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 
 #pull from model
-H= Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=7)
+H= Herbie("2026-08-30 01:00", model='rap', product='awp236pgrb', fxx=0)
 H.download()  # download full GRIB once, avoids inventory cache conflicts
 
 print(H.inventory(":850 mb"))
@@ -76,48 +76,57 @@ smooth_rh=gaussian_filter(mean_rh,2)
 
 
 
-#plot settings s
+# plot settings s
 proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
-                              standard_parallels=(30, 60))
-fig=plt.figure(figsize=(20,12))
-ax=plt.axes(projection=proj)
+                             standard_parallels=(30, 60))
+fig = plt.figure(figsize=(20, 12))
+ax = plt.axes(projection=proj)
 
-#set bounds
+# set bounds
 ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
-#GH contours
-line=ax.contour(lon, lat,gh_smooth,levels=list(range(90, 300, 3)),colors='black',linewidths=3,
-                transform=ccrs.PlateCarree())
+
+# GH contours
+line = ax.contour(lon, lat, gh_smooth, levels=list(range(90, 300, 3)), colors='black', linewidths=3,
+                  transform=ccrs.PlateCarree())
+ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
+
+# wind stuff
+wnd_speed = np.arange(25, 85, 5)
+speed_850 = np.sqrt(u_kts ** 2 + v_kts ** 2)
+
+cf = ax.contourf(lon, lat, speed_850, wnd_speed, cmap='BuPu', transform=ccrs.PlateCarree())
+cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
+cb.set_label('Wind Speed (kts)', fontsize=16)
+cb.ax.tick_params(labelsize=16)
+
+ax.barbs(lon, lat, u_masked, v_masked, length=8, regrid_shape=15,
+         fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
 
 
-#wind stuff
-wnd_speed= np.arange(25, 85, 5)
-speed_850=np.sqrt(u_kts**2+v_kts**2)
-# wind=ax.contourf(lon,lat,speed_850, wnd_speed, cmap='turbo', transform=ccrs.PlateCarree())
-ax.barbs(lon, lat, u_masked,v_masked,
-         length=8, regrid_shape=15, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
-ax.clabel(line,inline=True,colors='black',fontsize=12, fmt='%d')
 
-#temp contours
-cf_red=ax.contour(lon, lat, temp_c_smooth, levels=(range(5,40,5)), colors='red',linewidths=1.5,
-                  linestyles='dashed',transform=ccrs.PlateCarree())
-ax.clabel(cf_red,inline=True,colors='red',fontsize=15, fmt='%d')
-cf_red_bold=ax.contour(lon, lat, temp_c_smooth, levels=(range(20,40,5)), colors='red',linewidths=2,
-                  linestyles='dashed',transform=ccrs.PlateCarree())
-ax.clabel(cf_red_bold,inline=True,colors='red',fontsize=15, fmt='%d')
-cf_blue=ax.contour(lon, lat, temp_c_smooth, levels=(range(-40,0,5)), colors='blue',linewidths=1.5,
-                   linestyles='dashed',transform=ccrs.PlateCarree())
-ax.clabel(cf_blue,inline=True,colors='blue',fontsize=15, fmt='%d')
+# temp contours
+cf_red = ax.contour(lon, lat, temp_c_smooth, levels=(range(5, 40, 5)), colors='red', linewidths=1.5,
+                    linestyles='dashed', transform=ccrs.PlateCarree())
+ax.clabel(cf_red, inline=True, colors='red', fontsize=15, fmt='%d')
+cf_red_bold = ax.contour(lon, lat, temp_c_smooth, levels=(range(20, 40, 5)), colors='red', linewidths=2,
+                         linestyles='dashed', transform=ccrs.PlateCarree())
+ax.clabel(cf_red_bold, inline=True, colors='red', fontsize=15, fmt='%d')
+cf_blue = ax.contour(lon, lat, temp_c_smooth, levels=(range(-40, 0, 5)), colors='blue', linewidths=1.5,
+                     linestyles='dashed', transform=ccrs.PlateCarree())
+ax.clabel(cf_blue, inline=True, colors='blue', fontsize=15, fmt='%d')
 
-cf_freez=ax.contour(lon, lat, temp_c_smooth, levels=[0], colors='blue',linewidths=2,
-                   linestyles='solid',transform=ccrs.PlateCarree())
-ax.clabel(cf_freez,inline=True,colors='blue',fontsize=15, fmt='%d')
+cf_freez = ax.contour(lon, lat, temp_c_smooth, levels=[0], colors='blue', linewidths=2,
+                      linestyles='solid', transform=ccrs.PlateCarree())
+ax.clabel(cf_freez, inline=True, colors='blue', fontsize=15, fmt='%d')
+
+
 
 #additional plot settings
 ax.coastlines('50m')
 ax.add_feature(cfeature.BORDERS.with_scale('50m'))
 ax.add_feature(cfeature.STATES.with_scale('50m'))
 ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-ax.set_title(f'850mb Height (dam), Temp (C, red/blue)', fontsize=26, loc='center')
+ax.set_title(f'850mb Height (dam),\n Temp (C)', fontsize=26, loc='center')
 ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
 plt.tight_layout()

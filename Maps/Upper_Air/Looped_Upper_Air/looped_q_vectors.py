@@ -169,7 +169,7 @@ frames=[]
 
 for fxx in range(0,max_hours,1):
     try:
-        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        H = Herbie(target_time,model="gfs", product="pgrb2.0p25", fxx=fxx)
         out_path, valid_time = extract_build_data(H, fxx)
         frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
         print(f"Saved frame f{fxx:02d}")

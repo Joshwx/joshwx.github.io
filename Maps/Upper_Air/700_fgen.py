@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np
 
 #pull from model
-H= Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=0)
+H = Herbie("2026-09-18 13:00", model='rap', product='awp236pgrb', overwrite=True)
 
 print(H.inventory(":850 mb"))
 

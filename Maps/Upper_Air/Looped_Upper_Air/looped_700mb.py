@@ -164,7 +164,7 @@ else:
 frames=[]
 for fxx in range(0,max_hours,1):
     try:
-        H = Herbie(target_time, model='rap', product='awp236pgrb', fxx=fxx)
+        H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
         ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):700 mb:", remove_grib=True)
         ds2 = H.xarray(":RH:(700|650|600|550|500) mb")
         out_path, valid_time = extract_build_data(ds,ds2, H, fxx)
