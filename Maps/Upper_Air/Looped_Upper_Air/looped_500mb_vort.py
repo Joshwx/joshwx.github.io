@@ -82,24 +82,25 @@ def extract_build_data (ds,H,fxx):
 
     return out_path, valid_time
 
+#function that subsets the GFS data so you dont plot all the points in the global run
+def subset(ds, lon_min=-130, lon_max=-60,lat_min=15, lat_max=58):
+    lon_min_convert= lon_min%360
+    lon_max_convert= lon_max%360
+    return ds.sel(latitude=slice(lat_max, lat_min),longitude=slice(lon_min_convert, lon_max_convert),
+    )
+
 #pull from model
-target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
-max_hours=51
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(hours=4)).tz_localize(None).floor('6h')
+print('looking for run', target_time)
 
-#determine if 21 frames or 51
-run_number=target_time.hour
-
-if run_number % 6==3:
-    max_hours=52
-else:
-    max_hours=22
-
+fxx_list = list(range(0, 49, 1)) + list(range(51, 121, 3))
 #create empty list for frames
 frames=[]
-for fxx in range(0,max_hours,1):
+for fxx in fxx_list:
     try:
         H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
         ds = H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=True)
+        ds=subset(ds).load()
         out_path, valid_time=extract_build_data(ds, H, fxx)
         frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
         print(f"Saved frame f{fxx:02d}")
