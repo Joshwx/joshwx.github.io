@@ -89,21 +89,14 @@ def extract_build_data (ds,H, fxx):
 
 
 #pull from model
-target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(hours=4)).tz_localize(None).floor('6h')
 print('looking for run', target_time)
-max_hours=51
 
-#determine if 21 frames or 51
-run_number=target_time.hour
-
-if run_number % 6==3:
-    max_hours=52
-else:
-    max_hours=22
+fxx_list = list(range(0, 49, 1)) + list(range(51, 121, 3))
 
 #create empty list for frames
 frames=[]
-for fxx in range(0,max_hours,1):
+for fxx in fxx_list:
     try:
         H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
         ds = H.xarray(":(?:HGT|UGRD|VGRD):300 mb:", remove_grib=True)
