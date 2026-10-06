@@ -1,120 +1,100 @@
 import os
+import json
+import warnings
+from datetime import datetime, timezone
 
 import matplotlib
-# matplotlib.use("Agg")
+matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+import matplotlib.colors as mcolors
 import numpy as np
-import metpy
+import pandas as pd
 import metpy.calc as mpcalc
 from metpy.units import units
 from herbie import Herbie
-from herbie.toolbox import EasyMap, pc
-from herbie import paint
-import cartopy
 from cartopy import crs as ccrs, feature as cfeature
-import scipy
 from scipy.ndimage import gaussian_filter
-import pandas as pd
-from datetime import datetime, timedelta
-import json
-import matplotlib.colors as mcolors
+
+# silence the harmless cfgrib/xarray FutureWarning
+warnings.filterwarnings(
+    "ignore",
+    message=".*default value for compat will change.*",
+    category=FutureWarning,
+)
 
 output_dir = 'assets/maps/q_vector'
 os.makedirs(output_dir, exist_ok=True)
 
-#function that builds the images with ds and H as arguments
-def extract_build_data (H, fxx):
-    ###### 700mb #######
 
-    ds_700 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):700 mb:", remove_grib=True)
-    print(ds_700)
+# subsets the GFS data so you don't process/plot the whole globe
+def subset(ds, lon_min=-130, lon_max=-60, lat_min=15, lat_max=58):
+    lon_min_convert = lon_min % 360
+    lon_max_convert = lon_max % 360
+    return ds.sel(
+        latitude=slice(lat_max, lat_min),  # GFS latitude is descending
+        longitude=slice(lon_min_convert, lon_max_convert),
+    )
 
-    gh_700 = ds_700['gh'] / 10
-    u_700 = ds_700['u']
-    v_700 = ds_700['v']
+
+# loads one pressure level, cropped to CONUS and pulled into memory
+def load_level(H, level):
+    ds = H.xarray(f":(?:HGT|UGRD|VGRD|TMP):{level} mb:", remove_grib=True)
+    return subset(ds).load()
+
+
+# computes the q-vector and its divergence for one level
+def q_for_level(ds, level, dx, dy):
+    u = ds['u']
+    v = ds['v']
+    t = ds['t']
+    uq, vq = mpcalc.q_vector(u, v, t, level * units.hPa, dx=dx, dy=dy)
+    return uq, vq
+
+
+# function that builds the images from the Herbie object
+def extract_build_data(H, fxx):
+    ds_700 = load_level(H, 700)
+    ds_600 = load_level(H, 600)
+    ds_500 = load_level(H, 500)
+    ds_400 = load_level(H, 400)
+
     lat = ds_700['latitude']
     lon = ds_700['longitude']
-    temp_700 = ds_700['t']
-    u_kts_700 = ds_700['u'] * 1.944
-    v_kts_700 = ds_700['v'] * 1.944
-    level_700 = 700 * units.hPa
+    gh_500 = ds_500['gh'] / 10
 
-    # strip time (only need this once — same valid time across levels)
+    # strip time (same valid time across levels)
     time_valid = pd.Timestamp(ds_700['time'].values)
     time_str = time_valid.strftime('%HZ')
-    valid_time_moving = pd.Timestamp(ds_700['valid_time'].values)
-    valid_time = valid_time_moving.strftime('%HZ %a %b %d %Y')
+    valid_time = pd.Timestamp(ds_700['valid_time'].values).strftime('%HZ %a %b %d %Y')
 
+    # grid spacing computed once; all levels share the same cropped grid
     dx, dy = mpcalc.lat_lon_grid_deltas(lon, lat)
 
-    uqvect_700, vqvect_700 = mpcalc.q_vector(u_700, v_700, temp_700, level_700, dx=dx, dy=dy)
-    q_div_700 = 2 * mpcalc.divergence(uqvect_700, vqvect_700, dx=dx, dy=dy)
-
-    ###### 600mb #######
-    ds_600 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):600 mb:", remove_grib=True)
-    print(ds_600)
-
-    gh_600 = ds_600['gh'] / 10
-    u_600 = ds_600['u']
-    v_600 = ds_600['v']
-    temp_600 = ds_600['t']
-    u_kts_600 = ds_600['u'] * 1.944
-    v_kts_600 = ds_600['v'] * 1.944
-    level_600 = 600 * units.hPa
-
-    uqvect_600, vqvect_600 = mpcalc.q_vector(u_600, v_600, temp_600, level_600, dx=dx, dy=dy)
-    q_div_600 = 2 * mpcalc.divergence(uqvect_600, vqvect_600, dx=dx, dy=dy)
-
-    ###### 500mb #######
-    ds_500 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):500 mb:", remove_grib=True)
-    print(ds_500)
-
-    gh_500 = ds_500['gh'] / 10
-    u_500 = ds_500['u']
-    v_500 = ds_500['v']
-    temp_500 = ds_500['t']
-    u_kts_500 = ds_500['u'] * 1.944
-    v_kts_500 = ds_500['v'] * 1.944
-    level_500 = 500 * units.hPa
-
-    uqvect_500, vqvect_500 = mpcalc.q_vector(u_500, v_500, temp_500, level_500, dx=dx, dy=dy)
-    q_div_500 = 2 * mpcalc.divergence(uqvect_500, vqvect_500, dx=dx, dy=dy)
-    gh_smooth_500 = gaussian_filter(gh_500, 2)
-
-    ###### 400mb #######
-    ds_400 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):400 mb:", remove_grib=True)
-    print(ds_400)
-
-    gh_400 = ds_400['gh'] / 10
-    u_400 = ds_400['u']
-    v_400 = ds_400['v']
-    temp_400 = ds_400['t']
-    u_kts_400 = ds_400['u'] * 1.944
-    v_kts_400 = ds_400['v'] * 1.944
-    level_400 = 400 * units.hPa
-
-    uqvect_400, vqvect_400 = mpcalc.q_vector(u_400, v_400, temp_400, level_400, dx=dx, dy=dy)
-    q_div_400 = 2 * mpcalc.divergence(uqvect_400, vqvect_400, dx=dx, dy=dy)
+    uq_700, vq_700 = q_for_level(ds_700, 700, dx, dy)
+    uq_600, vq_600 = q_for_level(ds_600, 600, dx, dy)
+    uq_500, vq_500 = q_for_level(ds_500, 500, dx, dy)
+    uq_400, vq_400 = q_for_level(ds_400, 400, dx, dy)
 
     #### Averaging layer ######
-    uqvect_mean = (uqvect_700 + uqvect_600 + uqvect_500 + uqvect_400) / 4
-    vqvect_mean = (vqvect_700 + vqvect_600 + vqvect_500 + vqvect_400) / 4
+    uqvect_mean = (uq_700 + uq_600 + uq_500 + uq_400) / 4
+    vqvect_mean = (vq_700 + vq_600 + vq_500 + vq_400) / 4
     q_div_mean = 2 * mpcalc.divergence(uqvect_mean, vqvect_mean, dx=dx, dy=dy)
     q_div_smooth = gaussian_filter(q_div_mean * 1e18, 2)
+    gh_smooth_500 = gaussian_filter(gh_500.values, 2)
 
-    # plot settings s
-    proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35, standard_parallels=(30, 60))
+    # plot settings
+    proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
+                                 standard_parallels=(30, 60))
     fig = plt.figure(figsize=(20, 12))
     ax = plt.axes(projection=proj)
-    # set bounds
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 
-    # qvector stuff
+    # q-vector convergence/divergence
     clevs_qdiv = list(range(-35, -4, 5)) + list(range(5, 36, 5))
-    norm=mcolors.BoundaryNorm(clevs_qdiv,ncolors=256,extend='both')
-    cf = ax.contourf(lon, lat, q_div_smooth, clevs_qdiv, cmap='bwr_r',norm=norm, extend='both', transform=ccrs.PlateCarree())
+    norm = mcolors.BoundaryNorm(clevs_qdiv, ncolors=256, extend='both')
+    cf = ax.contourf(lon, lat, q_div_smooth, clevs_qdiv, cmap='bwr_r', norm=norm,
+                     extend='both', transform=ccrs.PlateCarree())
     line1 = ax.contour(lon, lat, q_div_smooth, colors='black', linewidths=1.5,
                        transform=ccrs.PlateCarree())
     ax.clabel(line1, inline=True, colors='black', fontsize=14, fmt='%d')
@@ -123,16 +103,16 @@ def extract_build_data (H, fxx):
     cb.set_label('m^2kg^-1s^-1', fontsize=16)
     cb.ax.tick_params(labelsize=16)
 
-    # GH contours
-    line = ax.contour(lon, lat, gh_smooth_500, levels=list(range(500, 600, 6)), colors='black', linewidths=3,
-                      transform=ccrs.PlateCarree())
+    # 500 mb GH contours
+    line = ax.contour(lon, lat, gh_smooth_500, levels=list(range(500, 600, 6)),
+                      colors='black', linewidths=3, transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=14, fmt='%d')
 
-    # vectors
-    wind_slice = (slice(None, None, 5), slice(None, None, 5))
-    ax.quiver(lon[wind_slice].values, lat[wind_slice].values,
-              uqvect_mean[wind_slice].values,
-              vqvect_mean[wind_slice].values,
+    # vectors: lon/lat are 1D, so thin each axis separately
+    step = 5
+    ax.quiver(lon.values[::step], lat.values[::step],
+              uqvect_mean.values[::step, ::step],
+              vqvect_mean.values[::step, ::step],
               pivot='mid', color='black',
               scale=5e-12, scale_units='inches',
               transform=ccrs.PlateCarree())
@@ -142,7 +122,7 @@ def extract_build_data (H, fxx):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
-    ax.set_title(f'400-700mb Q-Vectors\n (m^2kg^-1s^-1)', fontsize=20, loc='center')
+    ax.set_title('400-700mb Q-Vectors\n (m^2kg^-1s^-1)', fontsize=20, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
     out_path = os.path.join(output_dir, f'{fxx:02d}.png')
@@ -152,35 +132,28 @@ def extract_build_data (H, fxx):
     return out_path, valid_time
 
 
-#pull from model
-target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(minutes=60)).tz_localize(None).floor('h')
-max_hours=51
+# pull from model
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(hours=4)).tz_localize(None).floor('6h')
+print('looking for run', target_time)
 
-#determine if 21 frames or 51
-run_number=target_time.hour
-
-if run_number % 6==3:
-    max_hours=52
-else:
-    max_hours=22
-
-#create empty list for frames
-frames=[]
-
-for fxx in range(0,max_hours,1):
+fxx_list = list(range(0, 49, 1)) + list(range(51, 121, 3))
+frames = []
+for fxx in fxx_list:
     try:
-        H = Herbie(target_time,model="gfs", product="pgrb2.0p25", fxx=fxx)
+        H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
         out_path, valid_time = extract_build_data(H, fxx)
-        frames.append({"fxx": fxx, "file":os.path.basename(out_path), "valid_time":valid_time})
+        frames.append({"fxx": fxx, "file": os.path.basename(out_path), "valid_time": valid_time})
         print(f"Saved frame f{fxx:02d}")
     except Exception as e:
-        print(f"Skipping fxx=P{fxx}: {e}")
+        print(f"Skipping fxx={fxx}: {e}")
         continue
 
-#write document dictionary so the website JS knows what frames exist
-document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
-          'frames':frames}
+# write document dictionary so the website JS knows what frames exist
+document = {
+    "run_time": target_time.strftime("%Y-%m-%d %H:%M"),
+    "generated_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+    "frames": frames,
+}
 with open(os.path.join(output_dir, "document.json"), 'w') as f:
-    json.dump(document, f,indent=2)
+    json.dump(document, f, indent=2)
 print(f"Done {len(frames)} frames saved")
-
