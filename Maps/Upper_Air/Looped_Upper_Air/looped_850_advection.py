@@ -62,7 +62,7 @@ def extract_build_data (ds,H, fxx):
 
     # smooth gh
     gh_smooth = gaussian_filter(gh, 2)
-    advection_smooth = gaussian_filter(advection, 2)
+    advection_smooth = gaussian_filter(advection, 4)
     temp_c_smooth = gaussian_filter(temp_850, 2)
 
     advection_masked = np.ma.masked_where(np.abs(advection_smooth) < 0.5, advection_smooth)

@@ -80,7 +80,7 @@ def extract_build_data(H, fxx):
     uqvect_mean = (uq_700 + uq_600 + uq_500 + uq_400) / 4
     vqvect_mean = (vq_700 + vq_600 + vq_500 + vq_400) / 4
     q_div_mean = 2 * mpcalc.divergence(uqvect_mean, vqvect_mean, dx=dx, dy=dy)
-    q_div_smooth = gaussian_filter(q_div_mean * 1e18, 2)
+    q_div_smooth = gaussian_filter(q_div_mean * 1e18, 4)
     gh_smooth_500 = gaussian_filter(gh_500.values, 2)
 
     # plot settings

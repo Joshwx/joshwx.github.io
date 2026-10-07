@@ -85,7 +85,7 @@ def extract_build_data (ds,H, fxx):
     abs_advection = mpcalc.advection(abs_vort, u, v, dx=dx, dy=dy)
     synoptic_scale = abs_advection * 1e9
 
-    vort_smooth = gaussian_filter(synoptic_scale, 3)
+    vort_smooth = gaussian_filter(synoptic_scale, 4)
 
     # plot settings s
     proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
