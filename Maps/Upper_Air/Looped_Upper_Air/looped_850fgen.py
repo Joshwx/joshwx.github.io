@@ -1,10 +1,13 @@
-import sounderpy as spy
+import os
+
+import matplotlib
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 import metpy
 import metpy.calc as mpcalc
-from matplotlib.lines import lineStyles
 from metpy.units import units
 from herbie import Herbie
 from herbie.toolbox import EasyMap, pc
@@ -14,14 +17,11 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
-import numpy as np
+from datetime import datetime, timedelta
+import json
 
-#pull from model
-H= Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=0)
-
-# print(H.inventory(":850 mb"))
-
-ds=H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
+output_dir = 'assets/maps/upper_level_850_fgen'
+os.makedirs(output_dir, exist_ok=True)
 
 #function that builds the images with ds and H as arguments
 def extract_build_data (ds,H):
@@ -62,7 +62,7 @@ def extract_build_data (ds,H):
 
     # smoothed stuff
     gh_smooth = gaussian_filter(gh, 2)
-    fgen_smoothed = gaussian_filter(converted_fgen, 2)
+    fgen_smoothed = gaussian_filter(converted_fgen, 4)
 
     fgen_masked = np.ma.masked_where(np.abs(fgen_smoothed) <= .99, fgen_smoothed)
 
@@ -108,7 +108,36 @@ def extract_build_data (ds,H):
     plt.close()
     return fig,ax
 
-for fxx in range(0,52,1):
-    H = Herbie("2026-01-24 00:00", model="gfs", product="pgrb2.0p25", fxx=fxx)
-    ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
-    fig,ax= extract_build_data(ds,H)
+#function that subsets the GFS data so you dont plot all the points in the global run
+def subset(ds, lon_min=-130, lon_max=-60,lat_min=15, lat_max=58):
+    lon_min_convert= lon_min%360
+    lon_max_convert= lon_max%360
+    return ds.sel(latitude=slice(lat_max, lat_min),longitude=slice(lon_min_convert, lon_max_convert),
+    )
+
+#pull from model
+target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(hours=4)).tz_localize(None).floor('6h')
+print('looking for run', target_time)
+
+fxx_list = list(range(0, 25, 1)) + list(range(27, 121, 3))
+
+#create empty list for frames
+frames=[]
+
+for fxx in fxx_list:
+    try:
+        H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
+        ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
+        ds = subset(ds).load()
+        out_path, valid_time = extract_build_data(ds, H, fxx)
+        frames.append({"fxx": fxx, "file": os.path.basename(out_path), "valid_time": valid_time})
+    except Exception as e:
+        print(f"Skipping fxx=P{fxx}: {e}")
+        continue
+
+#write document dictionary so the website JS knows what frames exist
+document={"run_time":target_time.strftime("%Y-%m-%d %H:%M"), "generated_at": datetime.utcnow().isoformat() + 'Z',
+          'frames':frames}
+with open(os.path.join(output_dir, "document.json"), 'w') as f:
+    json.dump(document, f,indent=2)
+print(f"Done {len(frames)} frames saved")
