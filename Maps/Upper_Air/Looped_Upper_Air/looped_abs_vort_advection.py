@@ -69,8 +69,7 @@ def extract_build_data (ds,H, fxx):
     u_kts = ds['u'] * 1.944
     v_kts = ds['v'] * 1.944
     speed_500 = np.sqrt(u_kts ** 2 + v_kts ** 2)
-    # (print(speed_500))
-    print(time)
+
     # strip time
     time_valid = pd.Timestamp(ds['time'].values)
     time_str = time_valid.strftime('%HZ')
@@ -78,7 +77,7 @@ def extract_build_data (ds,H, fxx):
     valid_time = valid_time_moving.strftime('%HZ %a %b %d %Y')
 
     gh_smooth = gaussian_filter(gh, 1)
-    print(lat, lon)
+
 
     # vorticity calc
     dx, dy = mpcalc.lat_lon_grid_deltas(lon, lat)
@@ -86,7 +85,7 @@ def extract_build_data (ds,H, fxx):
     abs_advection = mpcalc.advection(abs_vort, u, v, dx=dx, dy=dy)
     synoptic_scale = abs_advection * 1e9
 
-    vort_smooth = gaussian_filter(synoptic_scale, 1)
+    vort_smooth = gaussian_filter(synoptic_scale, 3)
 
     # plot settings s
     proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35,
