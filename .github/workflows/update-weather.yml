@@ -210,8 +210,83 @@ jobs:
           name: maps-q-vectors
           path: assets/maps/q_vector/
 
+  run-925mb-fgen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 925mb fgen script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_925_fgen.py"
+
+      - name: Upload 925mb fgen output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-925-fgen
+          path: assets/maps/upper_level_925_fgen/
+
+  run-850mb-fgen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 850mb fgen script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_850_fgen.py"
+
+      - name: Upload 850mb fgen output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-850-fgen
+          path: assets/maps/upper_level_850_fgen/
+
+  run-700mb-fgen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 700mb fgen script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/looped_700_fgen.py"
+
+      - name: Upload 700mb fgen output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-700-fgen
+          path: assets/maps/upper_level_700_fgen/
+
   commit:
-    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors ]
+    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors, run-925mb-fgen, run-850mb-fgen, run-700mb-fgen ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -271,6 +346,27 @@ jobs:
         with:
           name: maps-q-vectors
           path: assets/maps/q_vector/
+
+      - name: Download 925mb fgen artifact
+        if: needs.run-925mb-fgen.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-925-fgen
+          path: assets/maps/upper_level_925_fgen/
+
+      - name: Download 850mb fgen artifact
+        if: needs.run-850mb-fgen.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-850-fgen
+          path: assets/maps/upper_level_850_fgen/
+
+      - name: Download 700mb fgen artifact
+        if: needs.run-700mb-fgen.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-700-fgen
+          path: assets/maps/upper_level_700_fgen/
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
