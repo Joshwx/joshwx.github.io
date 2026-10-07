@@ -93,7 +93,7 @@ def subset(ds, lon_min=-130, lon_max=-60,lat_min=15, lat_max=58):
 target_time = (pd.Timestamp.now(tz='UTC') - pd.Timedelta(hours=4)).tz_localize(None).floor('6h')
 print('looking for run', target_time)
 
-fxx_list = list(range(0, 49, 1)) + list(range(51, 121, 3))
+fxx_list = list(range(0, 25, 1)) + list(range(27, 121, 3))
 #create empty list for frames
 frames=[]
 for fxx in fxx_list:
