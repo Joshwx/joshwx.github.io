@@ -108,8 +108,8 @@ def extract_build_data(H, fxx):
                       colors='black', linewidths=3, transform=ccrs.PlateCarree())
     ax.clabel(line, inline=True, colors='black', fontsize=14, fmt='%d')
 
-    # vectors: lon/lat are 1D, so thin each axis separately
-    step = 5
+    # vectors
+    step = 7
     ax.quiver(lon.values[::step], lat.values[::step],
               uqvect_mean.values[::step, ::step],
               vqvect_mean.values[::step, ::step],
