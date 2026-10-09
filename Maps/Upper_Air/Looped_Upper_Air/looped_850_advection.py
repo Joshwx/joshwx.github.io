@@ -87,7 +87,7 @@ def extract_build_data (ds,H, fxx):
     cb.set_label('(10^-5 C/3hr)', fontsize=16)
     cb.ax.tick_params(labelsize=16)
     #Temp contours
-    cf_red = ax.contour(lon, lat, temp_c_smooth, levels=(range(-40, 40, 2)), colors='red', linewidths=1.5,
+    cf_red = ax.contour(lon, lat, temp_c_smooth, levels=(range(-40, 40, 3)), colors='red', linewidths=1.5,
                         linestyles='dashed', transform=ccrs.PlateCarree())
     ax.clabel(cf_red, inline=True, colors='red', fontsize=15, fmt='%d')
     # GH contours
