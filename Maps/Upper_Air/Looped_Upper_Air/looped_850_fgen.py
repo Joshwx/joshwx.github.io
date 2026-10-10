@@ -76,7 +76,7 @@ def extract_build_data (ds,H):
     cf = ax.contourf(lon, lat, adv_masked, adv_levels, cmap='bwr', extend='both',
                      transform=ccrs.PlateCarree())
     cbar = plt.colorbar(cf, ax=ax, orientation='horizontal', pad=0.03, shrink=0.6, aspect=40)
-    cbar.set_label('850mb Temperature Advection (°C/3hr)', fontsize=14)
+    cbar.set_label('C/3hr', fontsize=14)
 
     # frontogenesis
     fgen_levels = list(range(1, 25, 1))
