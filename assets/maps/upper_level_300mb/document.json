@@ -1,6 +1,6 @@
 {
   "run_time": "2026-10-10 12:00",
-  "generated_at": "2026-10-10T16:02:10.117032Z",
+  "generated_at": "2026-10-10T16:36:50.350203Z",
   "frames": [
     {
       "fxx": 0,
@@ -261,6 +261,31 @@
       "fxx": 105,
       "file": "105.png",
       "valid_time": "21Z Wed Oct 14 2026"
+    },
+    {
+      "fxx": 108,
+      "file": "108.png",
+      "valid_time": "00Z Thu Oct 15 2026"
+    },
+    {
+      "fxx": 111,
+      "file": "111.png",
+      "valid_time": "03Z Thu Oct 15 2026"
+    },
+    {
+      "fxx": 114,
+      "file": "114.png",
+      "valid_time": "06Z Thu Oct 15 2026"
+    },
+    {
+      "fxx": 117,
+      "file": "117.png",
+      "valid_time": "09Z Thu Oct 15 2026"
+    },
+    {
+      "fxx": 120,
+      "file": "120.png",
+      "valid_time": "12Z Thu Oct 15 2026"
     }
   ]
 }
