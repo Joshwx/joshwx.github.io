@@ -30,83 +30,82 @@ def extract_build_data (ds,H):
     v = ds['v']
     lat = ds['latitude']
     lon = ds['longitude']
-    temp = ds['t']
-    time = ds['time']
-
-    u_kts = ds['u'] * 1.944
-    v_kts = ds['v'] * 1.944
-    temp_850 = temp.metpy.convert_units('degC')
+    temp_k = ds['t']
     level = 850 * units.hPa
 
-    # fgen calculation
-    theta_850 = mpcalc.potential_temperature(level, temp_850)
-    print(theta_850)
+    u_kts = u * 1.944
+    v_kts = v * 1.944
+
     dx, dy = mpcalc.lat_lon_grid_deltas(lon, lat)
+
+    # frontogenesis
+    theta_850 = mpcalc.potential_temperature(level, temp_k)
     fronto_850 = mpcalc.frontogenesis(theta_850, u, v, dx, dy)
-    convert_to_per_100km_3hr = 1000 * 100 * 3600 * 3
+    converted_fgen = fronto_850 * (1000 * 100 * 3600 * 3)
 
-    converted_fgen = fronto_850 * convert_to_per_100km_3hr
-    print(converted_fgen)
-    # strip time
-    time_valid = pd.Timestamp(ds['time'].values)
-    time_str = time_valid.strftime('%HZ')
-    valid_time_moving = pd.Timestamp(ds['valid_time'].values)
-    valid_time = valid_time_moving.strftime('%HZ %a %b %d %Y')
+    # temp adv
+    adv = mpcalc.advection(temp_k, u, v, dx=dx, dy=dy)
+    adv_3hr = adv.metpy.convert_units('kelvin/hour').metpy.magnitude * 3
 
+    # timestuff
+    time_str = pd.Timestamp(ds['time'].values).strftime('%HZ')
+    valid_time = pd.Timestamp(ds['valid_time'].values).strftime('%HZ %a %b %d %Y')
+
+    # wind and masking
     speed_850 = np.sqrt(u_kts ** 2 + v_kts ** 2)
+    mask = np.asarray(speed_850) < 5
+    u_masked = np.ma.masked_array(np.asarray(u_kts), mask)
+    v_masked = np.ma.masked_array(np.asarray(v_kts), mask)
 
-    # mask settings
-    mask = speed_850 < 5
-    u_masked = np.ma.masked_array(u_kts, mask)
-    v_masked = np.ma.masked_array(v_kts, mask)
+    # smoothing
+    gh_smooth = gaussian_filter(np.asarray(gh), 2)
+    adv_smooth = gaussian_filter(np.asarray(adv_3hr), 2)
+    fgen_smooth = gaussian_filter(np.asarray(converted_fgen), 2)
 
-    # smoothed stuff
-    gh_smooth = gaussian_filter(gh, 2)
-    fgen_smoothed = gaussian_filter(converted_fgen, 4)
+    adv_masked = np.ma.masked_where(~np.isfinite(adv_smooth) | (np.abs(adv_smooth) < 0.5), adv_smooth)
+    fgen_masked = np.ma.masked_where(~np.isfinite(fgen_smooth) | (np.abs(fgen_smooth) <= 0.99), fgen_smooth)
 
-    fgen_masked = np.ma.masked_where(np.abs(fgen_smoothed) <= .99, fgen_smoothed)
-
-    print(np.nanmin(fgen_smoothed), np.nanmax(fgen_smoothed))
-
-    # print(converted_fgen)
-    # plot settings s
+    # plot settings
     proj = ccrs.LambertConformal(central_longitude=-96, central_latitude=35, standard_parallels=(30, 60))
     fig = plt.figure(figsize=(20, 12))
     ax = plt.axes(projection=proj)
-    # set bounds
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 
-    # fgen stuff
-    cf = ax.contourf(lon, lat, fgen_masked , np.arange(-8, 8.5, 1), cmap='bwr',
-                     extend='both', transform=ccrs.PlateCarree())
-    line1 = ax.contour(lon, lat, fgen_masked , colors='black', linewidths=.5,
-                       transform=ccrs.PlateCarree())
-    ax.clabel(line1, inline=True, colors='black', fontsize=12, fmt='%d')
+    # temp adv
+    adv_levels = np.arange(-8, 8.5, 1)
+    cf = ax.contourf(lon, lat, adv_masked, adv_levels, cmap='bwr', extend='both',
+                     transform=ccrs.PlateCarree())
+    cbar = plt.colorbar(cf, ax=ax, orientation='horizontal', pad=0.03, shrink=0.6, aspect=40)
+    cbar.set_label('850mb Temperature Advection (°C/3hr)', fontsize=14)
 
-    # GH contours
-    line = ax.contour(lon, lat, gh_smooth, levels=list(range(90, 300, 3)), colors='black', linewidths=3,
-                      transform=ccrs.PlateCarree())
+    # frontogenesis
+    fgen_levels = list(range(1, 25, 1))
+    line1 = ax.contour(lon, lat, fgen_masked, levels=fgen_levels, colors='purple',
+                       linewidths=2, transform=ccrs.PlateCarree())
+    ax.clabel(line1, inline=True, colors='purple', fontsize=14, fmt='%d')
 
-    # wind stuff
-    wnd_speed = np.arange(25, 85, 5)
-    speed_850 = np.sqrt(u_kts ** 2 + v_kts ** 2)
-    # wind=ax.contourf(lon,lat,speed_850, wnd_speed, cmap='turbo', transform=ccrs.PlateCarree())
-    ax.barbs(lon, lat, u_masked, v_masked,
-             length=8, regrid_shape=15, fill_empty=False, pivot='middle', transform=ccrs.PlateCarree())
-    ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
+    # gh
+    line = ax.contour(lon, lat, gh_smooth, levels=list(range(90, 300, 3)), colors='black',
+                      linewidths=3, transform=ccrs.PlateCarree())
+    ax.clabel(line, inline=True, colors='black', fontsize=14, fmt='%d')
 
-    # additional plot settings
+    # barbs
+    ax.barbs(lon, lat, u_masked, v_masked, length=8, regrid_shape=15, fill_empty=False,
+             pivot='middle', transform=ccrs.PlateCarree())
+
+    # map features
     ax.coastlines('50m')
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
-    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=22, loc='left')
-    ax.set_title(f'850mb Frontogenisis (K/100km/3hr)', fontsize=26, loc='center')
-    ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
+    ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
+    ax.set_title('850mb Temp Advection (shaded, °C/3hr) & \n Frontogenesis (purple, K/100km/3hr)',
+                 fontsize=20, loc='center')
+    ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
-    return fig,ax
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+    return out_path, valid_time
 
 #function that subsets the GFS data so you dont plot all the points in the global run
 def subset(ds, lon_min=-130, lon_max=-60,lat_min=15, lat_max=58):
@@ -129,7 +128,7 @@ for fxx in fxx_list:
         H = Herbie(target_time, model="gfs", product="pgrb2.0p25", fxx=fxx)
         ds = H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
         ds = subset(ds).load()
-        out_path, valid_time = extract_build_data(ds, H, fxx)
+        out_path, valid_time = extract_build_data(ds, H)
         frames.append({"fxx": fxx, "file": os.path.basename(out_path), "valid_time": valid_time})
     except Exception as e:
         print(f"Skipping fxx=P{fxx}: {e}")
