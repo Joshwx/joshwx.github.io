@@ -109,7 +109,7 @@ def extract_build_data(H, fxx):
     ax.clabel(line, inline=True, colors='black', fontsize=14, fmt='%d')
 
     # vectors
-    step = 7
+    step = 9
     ax.quiver(lon.values[::step], lat.values[::step],
               uqvect_mean.values[::step, ::step],
               vqvect_mean.values[::step, ::step],

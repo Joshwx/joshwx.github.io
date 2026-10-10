@@ -57,7 +57,7 @@ def extract_build_data (ds,H,fxx):
     ax = plt.axes(projection=proj)
     ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
     # vort contour
-    cf = ax.contourf(lon, lat, synoptic_scale, levels=list(range(16, 44, 4)),
+    cf = ax.contourf(lon, lat, synoptic_scale, levels=list(range(16, 60, 4)),
                      cmap='plasma', transform=ccrs.PlateCarree())
     cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
     cb.set_label('10^-5 s^-1', fontsize=16)
