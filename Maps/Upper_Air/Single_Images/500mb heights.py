@@ -15,11 +15,14 @@ from scipy.ndimage import gaussian_filter
 import pandas as pd
 
 #pull from model
-H= Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=5)
+H= Herbie("2026-10-10 06:00", model="gfs", product="pgrb2.0p25", fxx=0)
 
 # print(H.inventory(":500 mb"))
 
 ds=H.xarray(":(?:HGT|UGRD|VGRD):500 mb:", remove_grib=False)
+# subset BEFORE computing anything
+ds = ds.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
+
 print(ds)
 
 gh=ds['gh']/10
@@ -91,7 +94,7 @@ fig=plt.figure(figsize=(20,12))
 ax=plt.axes(projection=proj)
 ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
 #vort contour
-cf=ax.contourf(lon,lat,synoptic_scale, levels=list(range(16,44,4)),
+cf=ax.contourf(lon,lat,synoptic_scale, levels=list(range(16,60,4)),
                cmap='plasma', transform=ccrs.PlateCarree())
 cb=plt.colorbar(cf,ax=ax, orientation='horizontal', shrink=.4,pad=.02, aspect=25)
 cb.set_label('10^-5 s^-1', fontsize=16)

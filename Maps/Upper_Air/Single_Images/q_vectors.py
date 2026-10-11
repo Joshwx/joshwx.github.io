@@ -22,12 +22,14 @@ import json
 
 
 #pull from model
-H = Herbie("2026-01-24 00:00", model='rap', product='awp236pgrb', fxx=0)
+H = Herbie("2026-01-24 00:00", model="gfs", product="pgrb2.0p25", fxx=0)
 
 
 ###### 700mb #######
 
 ds_700 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):700 mb:", remove_grib=True)
+# subset BEFORE computing anything
+ds_700 = ds_700.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
 print(ds_700)
 
 gh_700 = ds_700['gh'] / 10
@@ -55,6 +57,8 @@ q_div_700 = 2 * mpcalc.divergence(uqvect_700, vqvect_700, dx=dx, dy=dy)
 
 ###### 600mb #######
 ds_600 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):600 mb:", remove_grib=True)
+ds_600 = ds_600.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
+
 print(ds_600)
 
 gh_600 = ds_600['gh'] / 10
@@ -72,6 +76,8 @@ q_div_600 = 2 * mpcalc.divergence(uqvect_600, vqvect_600, dx=dx, dy=dy)
 
 ###### 500mb #######
 ds_500 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):500 mb:", remove_grib=True)
+ds_500 = ds_500.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
+
 print(ds_500)
 
 gh_500 = ds_500['gh'] / 10
@@ -89,6 +95,8 @@ gh_smooth_500=gaussian_filter(gh_500, 2)
 
 ###### 400mb #######
 ds_400 = H.xarray(":(?:HGT|UGRD|VGRD|TMP):400 mb:", remove_grib=True)
+ds_400 = ds_400.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
+
 print(ds_400)
 
 gh_400 = ds_400['gh'] / 10
@@ -107,7 +115,7 @@ q_div_400 = 2 * mpcalc.divergence(uqvect_400, vqvect_400, dx=dx, dy=dy)
 uqvect_mean=(uqvect_700+uqvect_600+uqvect_500+uqvect_400)/4
 vqvect_mean=(vqvect_700+vqvect_600+vqvect_500+vqvect_400)/4
 q_div_mean=2*mpcalc.divergence(uqvect_mean,vqvect_mean, dx=dx, dy=dy)
-q_div_smooth=gaussian_filter(q_div_mean * 1e18, 2)
+q_div_smooth=gaussian_filter(q_div_mean * 1e18, 4)
 
 
 
@@ -138,9 +146,10 @@ ax.clabel(line,inline=True,colors='black',fontsize=14, fmt='%d')
 
 #vectors
 wind_slice=(slice(None,None,5),slice(None,None,5))
-ax.quiver(lon[wind_slice].values, lat[wind_slice].values,
-          uqvect_mean[wind_slice].values,
-          vqvect_mean[wind_slice].values,
+step = 7
+ax.quiver(lon.values[::step], lat.values[::step],
+          uqvect_mean.values[::step, ::step],
+          vqvect_mean.values[::step, ::step],
           pivot='mid', color='black',
           scale=5e-12, scale_units='inches',
           transform=ccrs.PlateCarree())

@@ -1,4 +1,3 @@
-import sounderpy as spy
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
@@ -13,28 +12,37 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
+from herbie import paint
 
 #pull from model
-H= Herbie("2026-08-26 12:00", model='rap', product='awp236pgrb',fxx=1)
+H= Herbie("2026-10-10 18:00", model="gfs", product="pgrb2.0p25",fxx=0)
 
-print(H.inventory(":APCP:"))
+# print(H.inventory(":APCP:"))
 
 ds_1 = H.xarray(":HGT:(1000) mb:", remove_grib=False)
+# subset BEFORE computing anything
+ds_1 = ds_1.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
 ds_2 = H.xarray(":HGT:(500) mb:", remove_grib=False)
+# subset BEFORE computing anything
+ds_2 = ds_2.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
 print(ds_1)
-ds3=H.xarray(":MSLMA:mean sea level:", remove_grib=False)
+ds3 = H.xarray(":PRMSL:mean sea level:", remove_grib=False)
+# subset BEFORE computing anything
+ds3 = ds3.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
 print(ds3)
-ds_4=H.xarray(":APCP:surface:0-1 hour acc fcst:", remove_grib=False)
-print(ds_4)
+# ds_4=H.xarray(":APCP:surface:0-1 hour acc fcst:", remove_grib=False)
+# print(ds_4)
+
+
 
 gh_1000=ds_1['gh']
 gh_500=ds_2['gh']
 lat=ds_1['latitude']
 lon=ds_1['longitude']
 time=ds_1['time']
-mslp=ds3['mslma']/100
-apcp=ds_4['tp']/25.4
-print(apcp)
+mslp=ds3['prmsl']/100
+# apcp=ds_4['tp']/25.4
+# print(apcp)
 
 
 
@@ -75,10 +83,10 @@ line3=ax.contour(lon, lat,mslp_smooth,levels=list(np.arange(940, 1072, 2)),color
 ax.clabel(line3,inline=True,colors='black',fontsize=12, fmt='%d')
 
 extent_precip=[.01,.05,.1,.15,.25,.35,.5,.75,1,1.5,2,3,4]
-precip=ax.contourf(lon,lat,apcp[:,:],extent_precip ,cmap='NWSRef', transform=ccrs.PlateCarree())
-cbar = plt.colorbar(precip, ax=ax, orientation='horizontal', pad=0.03, shrink=0.7)
-cbar.set_label('1-hr Precip (in)')
-cbar.ax.tick_params(labelsize=16)
+# precip=ax.contourf(lon,lat,apcp[:,:],extent_precip ,cmap='radar.reflectivity', transform=ccrs.PlateCarree())
+# cbar = plt.colorbar(precip, ax=ax, orientation='horizontal', pad=0.03, shrink=0.7)
+# cbar.set_label('1-hr Precip (in)')
+# cbar.ax.tick_params(labelsize=16)
 
 #additional plot settings
 ax.coastlines('50m')
