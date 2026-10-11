@@ -104,11 +104,11 @@ def extract_build_data (ds,H):
     ax.set_title(f'700mb Frontogenisis (K/100km/3hr)', fontsize=26, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=22, loc='right')
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
+    out_path = os.path.join(output_dir, f'{fxx:02d}.png')
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
 
-    return fig, ax
+    return out_path, valid_time
 
 #function that subsets the GFS data so you dont plot all the points in the global run
 def subset(ds, lon_min=-130, lon_max=-60,lat_min=15, lat_max=58):
