@@ -98,7 +98,7 @@ def extract_build_data (ds,H):
     ax.add_feature(cfeature.BORDERS.with_scale('50m'))
     ax.add_feature(cfeature.STATES.with_scale('50m'))
     ax.set_title(f'Model: {time_str} {H.model.upper()} | F{H.fxx:03d}', fontsize=15, loc='left')
-    ax.set_title('850mb Temp Advection (shaded, °C/3hr) & \n Frontogenesis (purple, K/100km/3hr)',
+    ax.set_title('850mb Temp Advection (shaded, C/3hr) & \n Frontogenesis (purple, K/100km/3hr)',
                  fontsize=20, loc='center')
     ax.set_title(f'\nValid: {valid_time}', fontsize=15, loc='right')
 
