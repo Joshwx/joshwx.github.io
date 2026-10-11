@@ -19,7 +19,7 @@ import json
 from datetime import datetime, timedelta
 
 
-output_dir = '/assets/maps/upper_level_trowal'
+output_dir = 'assets/maps/upper_level_trowal'
 os.makedirs(output_dir, exist_ok=True)
 
 def extract_build_data (ds,H, fxx):
