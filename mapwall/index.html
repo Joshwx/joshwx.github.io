@@ -87,11 +87,29 @@
     </div>
   </div>
   <div class="dropdown">
-    <button class="button">Forcing</button>
+    <button class="button">Frontogenesis</button>
     <div class="content">
       <a href="#" data-map="upper_level_925_fgen">925mb Frontogenesis</a>
       <a href="#" data-map="upper_level_850_fgen">850mb Frontogenesis</a>
       <a href="#" data-map="upper_level_700_fgen">700mb Frontogenesis</a>
+        </div>
+  </div>
+   <div class="dropdown">
+    <button class="button">Isentropic</button>
+    <div class="content">
+      <a href="#" data-map="upper_level_925_fgen">300K Wind, RH, Pressure</a>
+      <a href="#" data-map="upper_level_850_fgen">290K Wind, RH, Pressure</a>
+      <a href="#" data-map="upper_level_700_fgen">330K Potential Vorticity</a>
+      <a href="#" data-map="upper_level_700_fgen">310K Potential Vorticity</a>
+        </div>
+  </div>
+  <div class="dropdown">
+    <button class="button">Winter</button>
+    <div class="content">
+      <a href="#" data-map="upper_level_925_fgen">650mb Theta_e</a>
+      <a href="#" data-map="upper_level_850_fgen">Critical Thickness</a>
+      <a href="#" data-map="upper_level_700_fgen">330K Potential Vorticity</a>
+      <a href="#" data-map="upper_level_700_fgen">310K Potential Vorticity</a>
         </div>
   </div>
 </nav>
@@ -128,7 +146,9 @@ const mapFolders={
   "vort_adv":"abs_vort_advection",
   "850_adv":"850_advection",
   "q_vector":"q_vector",
-  "upper_level_850_fgen":"upper_level_850_fgen"
+  "upper_level_850_fgen":"upper_level_850_fgen",
+  "upper_level_925_fgen":"upper_level_925_fgen",
+  "upper_level_700_fgen":"upper_level_700_fgen"
 };
 let currentMap="mrms"
 
