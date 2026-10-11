@@ -13,24 +13,33 @@ from cartopy import crs as ccrs, feature as cfeature
 import scipy
 from scipy.ndimage import gaussian_filter
 import pandas as pd
+import colormaps as cmaps
 
 
 #pull from model
-H= Herbie("2026-01-26 12:00", model='rap', product='awp236pgrb', fxx=0)
+H= Herbie("2026-10-11 06:00", model="gfs", product="pgrb2.0p25")
 
 # print(H.inventory(":850 mb"))
 
-ds=H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):850 mb:", remove_grib=False)
+ds=H.xarray(":(?:HGT|UGRD|VGRD|TMP|RH):650 mb:", remove_grib=False)
+
+# subset BEFORE computing anything
+ds = ds.sel(latitude=slice(58, 15), longitude=slice(230, 300)).load()
 
 
 gh=ds['gh']/10
 
 lat=ds['latitude']
 lon=ds['longitude']
+u=ds['u']
+v=ds['v']
 temp=ds['t']
 time=ds['time']
 temp_c=ds['t']-273.15
 rh=ds['r']
+u_kts=ds['u']*1.944
+v_kts=ds['v']*1.944
+
 #strip time
 time_valid=pd.Timestamp(ds['time'].values)
 time_str=time_valid.strftime('%Y%m%d %H%MZ')
@@ -38,7 +47,7 @@ time_str=time_valid.strftime('%Y%m%d %H%MZ')
 
 dpt=metpy.calc.dewpoint_from_relative_humidity(temp_c.values*units.celsius,
                                                (rh.values/100)*units.dimensionless)
-theta_e_calc=metpy.calc.equivalent_potential_temperature(700*units.hPa, temp.values*units.kelvin, dpt)
+theta_e_calc=metpy.calc.equivalent_potential_temperature(650*units.hPa, temp.values*units.kelvin, dpt)
 print(theta_e_calc)
 
 #smooth gh
@@ -55,13 +64,16 @@ ax=plt.axes(projection=proj)
 
 #set bounds
 ax.set_extent([-120., -72., 22., 50.], crs=ccrs.PlateCarree())
-#GH contours
-line = ax.contour(lon, lat, gh_smooth, levels=list(range(2340, 3780, 30)), colors='black', linewidths=3,
-                      transform=ccrs.PlateCarree())
 
-#theta-e contours
-cf=ax.contourf(lon, lat, theta_e_smooth, cmap='Spectral_r',linewidths=2,
-                  linestyles='dashed',transform=ccrs.PlateCarree())
+#theta-e contours and fill
+trowal=np.arange(260,380,5)
+line=ax.contour(lon, lat, theta_e_smooth, levels=np.arange(260, 380, 3),linewidths=2, transform=ccrs.PlateCarree(), colors='black')
+cf=ax.contourf(lon, lat, theta_e_smooth,trowal,cmap=cmaps.GMT_wysiwygcont, transform=ccrs.PlateCarree())
+
+#wind stuff
+ax.barbs(lon, lat, u_kts,v_kts,
+         length=8, regrid_shape=15, pivot='middle', transform=ccrs.PlateCarree())
+ax.clabel(line,inline=True,colors='black',fontsize=12, fmt='%d')
 
 
 
@@ -70,7 +82,7 @@ ax.coastlines('50m')
 ax.add_feature(cfeature.BORDERS.with_scale('50m'))
 ax.add_feature(cfeature.STATES.with_scale('50m'))
 ax.set_title(f'Model: RAP', fontsize=22, loc='left')
-ax.set_title(f'700 mb Theta-e (K;shaded), Wind (kts)', fontsize=18, loc='center')
+ax.set_title(f'650 mb Theta-e (K; shaded), Wind (kts)', fontsize=18, loc='center')
 ax.set_title(f'\nValid {time_str}', fontsize=22, loc='right')
 
 plt.tight_layout()
