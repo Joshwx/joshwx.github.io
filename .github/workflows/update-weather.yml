@@ -285,8 +285,33 @@ jobs:
           name: maps-700-fgen
           path: assets/maps/upper_level_700_fgen/
 
+  run-trowal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run trowal script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/trowal_looped.py"
+
+      - name: Upload trowal output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-trowal
+          path: assets/maps/trowal/
+
   commit:
-    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors, run-925mb-fgen, run-850mb-fgen, run-700mb-fgen ]
+    needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors, run-925mb-fgen, run-850mb-fgen, run-700mb-fgen, run-trowal ]
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -367,6 +392,13 @@ jobs:
         with:
           name: maps-700-fgen
           path: assets/maps/upper_level_700_fgen/
+
+      - name: Download trowal artifact
+        if: needs.run-trowal.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-trowal
+          path: assets/maps/trowal/
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
