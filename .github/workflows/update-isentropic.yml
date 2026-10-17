@@ -2,6 +2,7 @@ name: Update Isentropic Maps
 
 on:
   schedule:
+    # Offset from the main weather-maps workflow (30 past) to avoid push collisions
     - cron: "50 1,7,13,19 * * *"
   workflow_dispatch:
 
@@ -27,7 +28,7 @@ jobs:
 
       - name: Run 290K isentropic script
         shell: bash -l {0}
-        run: python "Maps/Upper_Air/Looped_Upper_Air/290_isentropic_looped.py"
+        run: python "Maps/Upper_Air/Isentropic/290_isentropic_looped.py"
 
       - name: Upload 290K output
         uses: actions/upload-artifact@v4
@@ -52,7 +53,7 @@ jobs:
 
       - name: Run 300K isentropic script
         shell: bash -l {0}
-        run: python "Maps/Upper_Air/Looped_Upper_Air/300_isentropic_looped.py"
+        run: python "Maps/Upper_Air/Isentropic/300_isentropic_looped.py"
 
       - name: Upload 300K output
         uses: actions/upload-artifact@v4
