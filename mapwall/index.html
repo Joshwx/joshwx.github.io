@@ -128,15 +128,10 @@
 <script>
 const slider = document.getElementById('myRange');
 const img = document.getElementById("mapImage");
+const meta = document.getElementById("meta");
 let frames = [];
 
-function showFrame(i) {
-  const folder=mapFolders[currentMap];
-  img.src=`/assets/maps/${folder}/${frames[i].file}`;
-  slider.value=i;
-}
-
-const mapFolders={
+const mapFolders = {
   "300mb":"upper_level_300mb",
   "500mb":"upper_level_500mb",
   "700mb":"upper_level_700mb",
@@ -149,47 +144,58 @@ const mapFolders={
   "upper_level_850_fgen":"upper_level_850_fgen",
   "upper_level_925_fgen":"upper_level_925_fgen",
   "upper_level_700_fgen":"upper_level_700_fgen",
-  "upper_level_trowal":"upper_level_trowal"
-
+  "upper_level_trowal":"upper_level_trowal",
+  "soundings":"soundings"
 };
-let currentMap="mrms"
 
-async function loadMap(mapName){
-  currentMap= mapName;
-  const folder = mapFolders[mapName];
-
-  if (mapName== 'mrms'){
-    img.src=`/assets/maps/${folder}/latest.png`;
-    slider.style.display='none';
-    return;
-  }
-  slider.style.display="";
-  const res=await fetch(`/assets/maps/${folder}/document.json`);
-  const data = await res.json()
-  frames= data.frames;
-  slider.max=frames.length-1
-  showFrame(0)
+// Soundings live outside /assets/maps
+function basePath(mapName) {
+  if (mapName === "soundings") return "/assets/soundings";
+  return `/assets/maps/${mapFolders[mapName]}`;
 }
 
+let currentMap = "mrms";
+
+function showFrame(i) {
+  const frame = frames[i];
+  img.src = `${basePath(currentMap)}/${frame.file}`;
+  slider.value = i;
+  meta.textContent = currentMap === "soundings" ? frame.site : "";
+}
+
+async function loadMap(mapName) {
+  currentMap = mapName;
+
+  if (mapName === "mrms") {
+    img.src = `${basePath(mapName)}/latest.png`;
+    slider.style.display = "none";
+    meta.textContent = "";
+    return;
+  }
+
+  slider.style.display = "";
+  const res = await fetch(`${basePath(mapName)}/document.json`);
+  const data = await res.json();
+  frames = data.frames;
+  slider.min = 0;
+  slider.max = frames.length - 1;
+  showFrame(0);
+}
 
 slider.addEventListener("input", () => {
   showFrame(Number(slider.value));
 });
 
-
-document.querySelectorAll('[data-map]').forEach(link=>{
-  link.addEventListener('click', (e)=>{
+document.querySelectorAll('[data-map]').forEach(link => {
+  link.addEventListener('click', (e) => {
     e.preventDefault();
-    if (mapFolders[link.dataset.map]){
+    if (mapFolders[link.dataset.map]) {
       loadMap(link.dataset.map);
     }
-  })
-})
-
+  });
+});
 
 loadMap(currentMap);
-
-
 </script>
 </body>
 </html>
