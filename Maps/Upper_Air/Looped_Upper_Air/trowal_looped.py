@@ -75,7 +75,7 @@ def extract_build_data (ds,H, fxx):
     ax.clabel(line, inline=True, colors='black', fontsize=12, fmt='%d')
 
     cb = plt.colorbar(cf, ax=ax, orientation='horizontal', shrink=.4, pad=.02, aspect=25)
-    cb.set_label('Wind Speed (kts)', fontsize=16)
+    cb.set_label('K', fontsize=16)
     cb.ax.tick_params(labelsize=16)
 
     # additional plot settings
