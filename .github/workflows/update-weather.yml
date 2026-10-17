@@ -398,7 +398,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: maps-trowal
-          path: assets/maps/trowal/
+          path: assets/maps/upper_level_trowal
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
