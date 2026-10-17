@@ -308,7 +308,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maps-trowal
-          path: assets/maps/trowal/
+          path: assets/maps/upper_level_trowal/
 
   commit:
     needs: [ run-300mb, run-500mb, run-500mb-vort, run-500mb-abs-vort-advection, run-700mb, run-850mb, run-850mb-advection, run-q-vectors, run-925mb-fgen, run-850mb-fgen, run-700mb-fgen, run-trowal ]
@@ -399,6 +399,7 @@ jobs:
         with:
           name: maps-trowal
           path: assets/maps/upper_level_trowal
+
 
       - name: Commit and push updated maps
         uses: stefanzweifel/git-auto-commit-action@v5
