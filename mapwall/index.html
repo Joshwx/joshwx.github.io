@@ -115,15 +115,16 @@
 </nav>
 
 <h1 id="pageTitle"></h1>
-<div id="meta"></div>
-
-<img id="mapImage" src="" alt="Weather map frame">
 
 <div id="controls">
   <div class="slidecontainer">
     <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
   </div>
 </div>
+
+<div id="meta"></div>
+
+<img id="mapImage" src="" alt="Weather map frame">
 
 <script>
 const slider = document.getElementById('myRange');
@@ -160,7 +161,6 @@ function showFrame(i) {
   const frame = frames[i];
   img.src = `${basePath(currentMap)}/${frame.file}`;
   slider.value = i;
-  meta.textContent = currentMap === "soundings" ? frame.site : "";
 }
 
 async function loadMap(mapName) {
