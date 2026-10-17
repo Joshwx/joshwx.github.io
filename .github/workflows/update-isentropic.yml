@@ -1,0 +1,94 @@
+name: Update Isentropic Maps
+
+on:
+  schedule:
+    - cron: "50 1,7,13,19 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-isentropic-maps
+  cancel-in-progress: false
+
+jobs:
+  run-290k:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 290K isentropic script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/290_isentropic_looped.py"
+
+      - name: Upload 290K output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-290-isentropic
+          path: assets/maps/290_isentropic/
+
+  run-300k:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: Map_wall
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Run 300K isentropic script
+        shell: bash -l {0}
+        run: python "Maps/Upper_Air/Looped_Upper_Air/300_isentropic_looped.py"
+
+      - name: Upload 300K output
+        uses: actions/upload-artifact@v4
+        with:
+          name: maps-300-isentropic
+          path: assets/maps/300_isentropic/
+
+  commit:
+    needs: [run-290k, run-300k]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Pull latest changes
+        run: git pull --rebase -X ours origin main
+
+      - name: Download 290K artifact
+        if: needs.run-290k.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-290-isentropic
+          path: assets/maps/290_isentropic/
+
+      - name: Download 300K artifact
+        if: needs.run-300k.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: maps-300-isentropic
+          path: assets/maps/300_isentropic/
+
+      - name: Commit and push updated maps
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update isentropic maps"
+          file_pattern: "assets/maps/290_isentropic/** assets/maps/300_isentropic/**"
