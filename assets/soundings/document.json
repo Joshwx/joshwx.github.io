@@ -1,11 +1,7 @@
 {
-  "run_time": "2026-10-30 00:00",
-  "generated_at": "2026-10-30T06:55:33Z",
+  "run_time": "2026-10-30 12:00",
+  "generated_at": "2026-10-30T18:21:37Z",
   "frames": [
-    {
-      "site": "BNA",
-      "file": "sounding_BNA.png"
-    },
     {
       "site": "ILN",
       "file": "sounding_ILN.png"
