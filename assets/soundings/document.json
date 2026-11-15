@@ -1,22 +1,5 @@
 {
-  "run_time": "2026-11-15 00:00",
-  "generated_at": "2026-11-15T07:39:14Z",
-  "frames": [
-    {
-      "site": "BNA",
-      "file": "sounding_BNA.png"
-    },
-    {
-      "site": "ILN",
-      "file": "sounding_ILN.png"
-    },
-    {
-      "site": "ILX",
-      "file": "sounding_ILX.png"
-    },
-    {
-      "site": "SGF",
-      "file": "sounding_SGF.png"
-    }
-  ]
+  "run_time": "2026-11-15 12:00",
+  "generated_at": "2026-11-15T19:12:09Z",
+  "frames": []
 }
