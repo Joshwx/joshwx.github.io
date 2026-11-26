@@ -1,6 +1,6 @@
 {
-  "run_time": "2026-11-25 12:00",
-  "generated_at": "2026-11-25T22:04:11Z",
+  "run_time": "2026-11-26 00:00",
+  "generated_at": "2026-11-26T09:15:59Z",
   "frames": [
     {
       "site": "BNA",
@@ -13,10 +13,6 @@
     {
       "site": "ILX",
       "file": "sounding_ILX.png"
-    },
-    {
-      "site": "SGF",
-      "file": "sounding_SGF.png"
     }
   ]
 }
